@@ -22,12 +22,29 @@ CEF capi fixes
 
 /*
 #cgo CFLAGS: -I./../lib
-#cgo LDFLAGS: -r .
+#cgo LDFLAGS: -lcef
+#cgo pkg-config: --libs --cflags gtk+-2.0
 #include <stdlib.h>
 #include "string.h"
 #include "include/capi/cef_app_capi.h"
 #include "handlers/cef_app.h"
 #include "handlers/cef_client.h"
+
+
+void ExecuteJavaScript(cef_browser_t* browser, const char* code, const char* script_url, int start_line)
+{
+    cef_frame_t * frame = browser->get_main_frame(browser);
+    cef_string_t * codeCef = cef_string_userfree_utf16_alloc();
+    cef_string_from_utf8(code, strlen(code), codeCef);
+    cef_string_t * urlVal = cef_string_userfree_utf16_alloc();
+    cef_string_from_utf8(script_url, strlen(script_url), urlVal);
+
+    frame->execute_java_script(frame, codeCef, urlVal, start_line);
+
+    cef_string_userfree_utf16_free(urlVal);
+    cef_string_userfree_utf16_free(codeCef);
+}
+
 */
 import "C"
 import (
@@ -63,6 +80,39 @@ type Settings struct {
 }
 
 type BrowserSettings struct {
+	///
+	// Controls whether file URLs will have access to all URLs. Also configurable
+	// using the "allow-universal-access-from-files" command-line switch.
+	///
+	UniversalAccessFromFileUrls bool
+
+	///
+	// Controls whether file URLs will have access to other file URLs. Also
+	// configurable using the "allow-access-from-files" command-line switch.
+	///
+	FileAccessFromFileUrls bool
+
+	///
+	// Controls whether web security restrictions (same-origin policy) will be
+	// enforced. Disabling this setting is not recommend as it will allow risky
+	// security behavior such as cross-site scripting (XSS). Also configurable
+	// using the "disable-web-security" command-line switch.
+	///
+	WebSecurity bool
+	///
+	// Controls whether WebGL can be used. Note that WebGL requires hardware
+	// support and may not work on all systems even when enabled. Also
+	// configurable using the "disable-webgl" command-line switch.
+	///
+	Webgl bool
+
+	///
+	// Controls whether content that depends on accelerated compositing can be
+	// used. Note that accelerated compositing requires hardware support and may
+	// not work on all systems even when enabled. Also configurable using the
+	// "disable-accelerated-compositing" command-line switch.
+	///
+	AcceleratedCompositing bool
 }
 
 const (
@@ -110,12 +160,32 @@ func ExecuteProcess(appHandle unsafe.Pointer) int {
 	// and cef_initialize().
 	// OFF: _SandboxInfo = C.cef_sandbox_info_create()
 
-	var exitCode C.int = C.cef_execute_process(_MainArgs, _AppHandler,
-		_SandboxInfo)
+	var exitCode C.int = C.cef_execute_process(_MainArgs, _AppHandler, _SandboxInfo)
 	if exitCode >= 0 {
 		os.Exit(int(exitCode))
 	}
 	return int(exitCode)
+}
+
+func cefStateFromBool(state bool) C.cef_state_t {
+	if state == true {
+		return C.STATE_ENABLED
+	} else {
+		return C.STATE_DISABLED
+	}
+}
+
+func (b *BrowserSettings) ToStruct() (cefBrowserSettings *C.struct__cef_browser_settings_t) {
+	// Initialize cef_browser_settings_t structure.
+	cefBrowserSettings = (*C.struct__cef_browser_settings_t)(C.calloc(1, C.sizeof_struct__cef_browser_settings_t))
+	cefBrowserSettings.size = C.sizeof_struct__cef_browser_settings_t
+
+	cefBrowserSettings.universal_access_from_file_urls = cefStateFromBool(b.UniversalAccessFromFileUrls)
+	cefBrowserSettings.file_access_from_file_urls = cefStateFromBool(b.FileAccessFromFileUrls)
+	cefBrowserSettings.web_security = cefStateFromBool(b.WebSecurity)
+	cefBrowserSettings.webgl = cefStateFromBool(b.Webgl)
+	cefBrowserSettings.accelerated_compositing = cefStateFromBool(b.AcceleratedCompositing)
+	return cefBrowserSettings
 }
 
 func Initialize(settings Settings) int {
@@ -202,22 +272,27 @@ func Initialize(settings Settings) int {
 	return int(ret)
 }
 
-func CreateBrowser(hwnd unsafe.Pointer, browserSettings BrowserSettings, url string) (browser *C.cef_browser_t) {
+func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string) (browser *Browser) {
 	Logger.Println("CreateBrowser, url=", url)
 
 	// Initialize cef_window_info_t structure.
 	var windowInfo *C.cef_window_info_t
-	windowInfo = (*C.cef_window_info_t)(
-		C.calloc(1, C.sizeof_cef_window_info_t))
+	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
 
-	// Initialize cef_browser_settings_t structure.
-	var cefBrowserSettings *C.struct__cef_browser_settings_t
-	cefBrowserSettings = (*C.struct__cef_browser_settings_t)(
-		C.calloc(1, C.sizeof_struct__cef_browser_settings_t))
-	cefBrowserSettings.size = C.sizeof_struct__cef_browser_settings_t
+	return &Browser{C.cef_browser_host_create_browser_sync(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToStruct(), nil)}
+}
 
-	return C.cef_browser_host_create_browser_sync(windowInfo, _ClientHandler, CEFString(url), cefBrowserSettings, nil)
+type Browser struct {
+    cbrowser *C.cef_browser_t
+}
+
+func (b *Browser) ExecuteJavaScript(code, url string, startLine int) {
+	codeCString := C.CString(code)
+	defer C.free(unsafe.Pointer(codeCString))
+	urlCString := C.CString(url)
+	defer C.free(unsafe.Pointer(urlCString))
+	C.ExecuteJavaScript(b.cbrowser, codeCString, urlCString, C.int(startLine))
 }
 
 func RunMessageLoop() {

@@ -21,39 +21,39 @@ import "C"
 import "unsafe"
 
 import (
-    "os"
+	"os"
 )
 
 var _Argv []*C.char = make([]*C.char, len(os.Args))
 
 func FillMainArgs(mainArgs *C.struct__cef_main_args_t,
-        appHandle unsafe.Pointer) {
-    // On Mac appHandle is nil.
-    Logger.Println("FillMainArgs, argc=", len(os.Args))
-    for i, arg := range os.Args {
-        _Argv[C.int(i)] = C.CString(arg)
-    }
-    mainArgs.argc = C.int(len(os.Args))
-    mainArgs.argv = &_Argv[0]
+	appHandle unsafe.Pointer) {
+	// On Mac appHandle is nil.
+	Logger.Println("FillMainArgs, argc=", len(os.Args))
+	for i, arg := range os.Args {
+		_Argv[C.int(i)] = C.CString(arg)
+	}
+	mainArgs.argc = C.int(len(os.Args))
+	mainArgs.argv = &_Argv[0]
 }
 
 func FillWindowInfo(windowInfo *C.cef_window_info_t, hwnd unsafe.Pointer) {
-    Logger.Println("FillWindowInfo")
-    
-    // Setting title isn't required for the CEF inner window.
-    // --
-    // var windowName *C.char = C.CString("TODO Darwin example")
-    // defer C.free(unsafe.Pointer(windowName))
-    // C.cef_string_from_utf8(windowName, C.strlen(windowName),
-    //        &windowInfo.window_name)
+	Logger.Println("FillWindowInfo")
 
-    var bounds C.NSRect = C.GetWindowBounds(hwnd)
+	// Setting title isn't required for the CEF inner window.
+	// --
+	// var windowName *C.char = C.CString("TODO Darwin example")
+	// defer C.free(unsafe.Pointer(windowName))
+	// C.cef_string_from_utf8(windowName, C.strlen(windowName),
+	//        &windowInfo.window_name)
 
-    windowInfo.x = C.int(bounds.origin.x)
-    windowInfo.y = C.int(bounds.origin.y)
-    windowInfo.width = C.int(bounds.size.width)
-    windowInfo.height = C.int(bounds.size.height)
+	var bounds C.NSRect = C.GetWindowBounds(hwnd)
 
-    // parent
-    windowInfo.parent_view = hwnd
+	windowInfo.x = C.int(bounds.origin.x)
+	windowInfo.y = C.int(bounds.origin.y)
+	windowInfo.width = C.int(bounds.size.width)
+	windowInfo.height = C.int(bounds.size.height)
+
+	// parent
+	windowInfo.parent_view = hwnd
 }

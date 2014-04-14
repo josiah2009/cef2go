@@ -57,44 +57,44 @@ void ActivateApp() {
 import "C"
 import "unsafe"
 import (
-    "os"
-    "log"
-    "path/filepath"
+	"log"
+	"os"
+	"path/filepath"
 )
 
 var Logger *log.Logger = log.New(os.Stdout, "[cocoa] ", log.Lshortfile)
 
 func InitializeApp() {
-    C.InitializeApp()
+	C.InitializeApp()
 }
 
 func CreateWindow(title string, width int, height int) unsafe.Pointer {
-    Logger.Println("CreateWindow")
-    csTitle := C.CString(title)
-    defer C.free(unsafe.Pointer(csTitle))
-    window := C.CreateWindow(csTitle, C.int(width), C.int(height))
-    return window
+	Logger.Println("CreateWindow")
+	csTitle := C.CString(title)
+	defer C.free(unsafe.Pointer(csTitle))
+	window := C.CreateWindow(csTitle, C.int(width), C.int(height))
+	return window
 }
 
 func ActivateApp() {
-    C.ActivateApp()
+	C.ActivateApp()
 }
 
 type DestroyCallback func()
-var destroySignalCallbacks map[uintptr]DestroyCallback =
-        make(map[uintptr]DestroyCallback)
+
+var destroySignalCallbacks map[uintptr]DestroyCallback = make(map[uintptr]DestroyCallback)
 
 func ConnectDestroySignal(window unsafe.Pointer, callback DestroyCallback) {
-    Logger.Println("ConnectDestroySignal")
-    ptr := uintptr(window)
-    destroySignalCallbacks[ptr] = callback
+	Logger.Println("ConnectDestroySignal")
+	ptr := uintptr(window)
+	destroySignalCallbacks[ptr] = callback
 }
 
 func GetExecutableDir() string {
-    var path []C.char = make([]C.char, 1024)
-    var size C.uint32_t = 1024
-    if (C._NSGetExecutablePath(&path[0], &size) == 0) {
-        return filepath.Dir(C.GoString(&path[0]))
-    }
-    return "."
+	var path []C.char = make([]C.char, 1024)
+	var size C.uint32_t = 1024
+	if C._NSGetExecutablePath(&path[0], &size) == 0 {
+		return filepath.Dir(C.GoString(&path[0]))
+	}
+	return "."
 }

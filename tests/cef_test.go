@@ -12,39 +12,39 @@
 package cef_test
 
 import (
-    "testing"
-    "cef"
-    "log"
-    "os"
+	"cef"
+	"log"
+	"os"
+	"testing"
 )
 
 var Logger *log.Logger = log.New(os.Stdout, "[cef_test] ", log.Lshortfile)
 
 func Test_WorkingDirectory(t *testing.T) {
-    // Change working directory while running tests, otherwise
-    // CEF may have troubles finding the resource pak files.
-    os.Chdir("./../../Release")
+	// Change working directory while running tests, otherwise
+	// CEF may have troubles finding the resource pak files.
+	os.Chdir("./../../Release")
 }
 
 func Test_ExecuteProcess(t *testing.T) {
-    Logger.Println("Test_ExecuteProcess")
-    // If called for the browser process it will return 
-    // immediately with a value of -1
-    code := cef.ExecuteProcess(nil)
-    Logger.Println("ExecuteProcess returned:", code)
+	Logger.Println("Test_ExecuteProcess")
+	// If called for the browser process it will return
+	// immediately with a value of -1
+	code := cef.ExecuteProcess(nil)
+	Logger.Println("ExecuteProcess returned:", code)
 }
 
 func Test_Initialize(t *testing.T) {
-    Logger.Println("Test_Initialize")
-    settings := cef.Settings{}
-    init := cef.Initialize(settings)
-    Logger.Println("Initialize() returned:", init)
-    if init != 1 {
-        t.Errorf("Initialize() returned: %d", init)
-    }
+	Logger.Println("Test_Initialize")
+	settings := cef.Settings{}
+	init := cef.Initialize(settings)
+	Logger.Println("Initialize() returned:", init)
+	if init != 1 {
+		t.Errorf("Initialize() returned: %d", init)
+	}
 }
 
 func Test_Shutdown(t *testing.T) {
-    Logger.Println("Test_Shutdown")
-    cef.Shutdown()
+	Logger.Println("Test_Shutdown")
+	cef.Shutdown()
 }
