@@ -29,11 +29,11 @@ CEF capi fixes
 #include "handlers/cef_client.h"
 */
 import "C"
-import "unsafe"
 import (
 	"log"
 	"os"
 	"runtime"
+	"unsafe"
 )
 
 var Logger *log.Logger = log.New(os.Stdout, "[cef] ", log.Lshortfile)
@@ -191,7 +191,7 @@ func Initialize(settings Settings) int {
 	C.cef_string_from_utf8(localesDirPath, C.strlen(localesDirPath),
 		&cefSettings.locales_dir_path)
 
-        cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
+	cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
 
 	// no_sandbox
 	// ----------

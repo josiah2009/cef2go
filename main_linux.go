@@ -4,6 +4,8 @@
 
 package main
 
+
+import "C"
 import (
     "cef"
     "gtk"
@@ -11,10 +13,10 @@ import (
     "log"
 )
 
-var Logger *log.Logger = log.New(os.Stdout, "[main] ", log.Lshortfile)
+var Logger *log.Logger = log.New(os.Stdout, "[main] ", log.Lshortfile)cef2
 
 func main() {
-    // TODO: It should be executable's directory used
+    // TODO: It should be executable's directory use
     // rather than working directory.
     cwd, _ := os.Getwd()
 
@@ -37,7 +39,9 @@ func main() {
     // Create browser.
     browserSettings := cef.BrowserSettings{}
     url := "file://" + cwd + "/example.html"
-    cef.CreateBrowser(window, browserSettings, url)
+    browser := cef.CreateBrowser(window, browserSettings, url)
+    frame := browser.get_main_frame()
+    frame.execute_java_script(cef.CEFString("console.log('sup');"), cef.CEFString(""), C.int(1)) 
 
     // CEF loop and shutdown.
     cef.RunMessageLoop()
