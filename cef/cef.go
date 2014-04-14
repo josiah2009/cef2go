@@ -21,7 +21,8 @@ CEF capi fixes
 */
 
 /*
-#cgo CFLAGS: -I./../../
+#cgo CFLAGS: -I./../lib
+#cgo LDFLAGS: -r .
 #include <stdlib.h>
 #include "string.h"
 #include "include/capi/cef_app_capi.h"

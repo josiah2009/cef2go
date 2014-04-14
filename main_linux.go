@@ -7,8 +7,8 @@ package main
 
 import "C"
 import (
-    "cef"
-    "gtk"
+    "github.com/paperlesspost/cef2go/cef"
+    "github.com/paperlesspost/cef2go/gtk"
     "os"
     "log"
 )
