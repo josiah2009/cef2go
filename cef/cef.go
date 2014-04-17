@@ -50,7 +50,6 @@ import "C"
 import (
 	"log"
 	"os"
-	"runtime"
 	"unsafe"
 )
 
@@ -189,11 +188,11 @@ func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
 	// Initialize cef_settings_t structure.
 	cefSettings = (*C.struct__cef_settings_t)(C.calloc(1, C.sizeof_struct__cef_settings_t))
 	cefSettings.size = C.sizeof_struct__cef_settings_t
-	&cefSettings.cache_path = CEFString(settings.CachePath)
+	cefSettings.cache_path = CEFString(settings.CachePath)
 	cefSettings.log_severity = (C.cef_log_severity_t)(C.int(settings.LogSeverity))
-	&cefSettings.log_file = CEFString(settings.LogFile)
-	&cefSettings.resources_dir_path = CEFString(settings.ResourcesDirPath)
-	&cefSettings.locales_dir_path = CEFString(settings.LocalesDirPath)
+	cefSettings.log_file = CEFString(settings.LogFile)
+	cefSettings.resources_dir_path = CEFString(settings.ResourcesDirPath)
+	cefSettings.locales_dir_path = CEFString(settings.LocalesDirPath)
 	cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
 	cefSettings.no_sandbox = C.int(1)
 	return
