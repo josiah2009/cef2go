@@ -189,22 +189,22 @@ func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
 	// Initialize cef_settings_t structure.
 	cefSettings = (*C.struct__cef_settings_t)(C.calloc(1, C.sizeof_struct__cef_settings_t))
 	cefSettings.size = C.sizeof_struct__cef_settings_t
-	cefSettings.cache_path = CEFString(settings.CachePath)
+	cefSettings.cache_path = &CEFString(settings.CachePath)
 	cefSettings.log_severity = (C.cef_log_severity_t)(C.int(settings.LogSeverity))
-	cefSettings.log_file = CEFString(settings.LogFile)
+	cefSettings.log_file = &CEFString(settings.LogFile)
 	if settings.ResourcesDirPath == "" && runtime.GOOS != "darwin" {
 		// Setting this path is required for the tests to run fine.
 		cwd, _ := os.Getwd()
 		settings.ResourcesDirPath = cwd
 	}
 
-	cefSettings.resources_dir_path = CEFString(settings.ResourcesDirPath)
+	cefSettings.resources_dir_path = &CEFString(settings.ResourcesDirPath)
 	if settings.LocalesDirPath == "" && runtime.GOOS != "darwin" {
 		// Setting this path is required for the tests to run fine.
 		cwd, _ := os.Getwd()
 		settings.LocalesDirPath = cwd + "/locales"
 	}
-	cefSettings.locales_dir_path = CEFString(settings.LocalesDirPath)
+	cefSettings.locales_dir_path = &CEFString(settings.LocalesDirPath)
 	cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
 	cefSettings.no_sandbox = C.int(1)
 	return
