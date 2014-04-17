@@ -138,15 +138,12 @@ func SetLogger(logger *log.Logger) {
 }
 
 func _InitializeGlobalCStructures() {
-	_MainArgs = (*C.struct__cef_main_args_t)(
-		C.calloc(1, C.sizeof_struct__cef_main_args_t))
+	_MainArgs = (*C.struct__cef_main_args_t)(C.calloc(1, C.sizeof_struct__cef_main_args_t))
 
-	_AppHandler = (*C.cef_app_t)(
-		C.calloc(1, C.sizeof_cef_app_t))
+	_AppHandler = (*C.cef_app_t)(C.calloc(1, C.sizeof_cef_app_t))
 	C.initialize_app_handler(_AppHandler)
 
-	_ClientHandler = (*C.struct__cef_client_t)(
-		C.calloc(1, C.sizeof_struct__cef_client_t))
+	_ClientHandler = (*C.struct__cef_client_t)(C.calloc(1, C.sizeof_struct__cef_client_t))
 	C.initialize_client_handler(_ClientHandler)
 }
 
@@ -175,7 +172,7 @@ func cefStateFromBool(state bool) C.cef_state_t {
 	}
 }
 
-func (b *BrowserSettings) ToStruct() (cefBrowserSettings *C.struct__cef_browser_settings_t) {
+func (b *BrowserSettings) ToCStruct() (cefBrowserSettings *C.struct__cef_browser_settings_t) {
 	// Initialize cef_browser_settings_t structure.
 	cefBrowserSettings = (*C.struct__cef_browser_settings_t)(C.calloc(1, C.sizeof_struct__cef_browser_settings_t))
 	cefBrowserSettings.size = C.sizeof_struct__cef_browser_settings_t
@@ -186,6 +183,31 @@ func (b *BrowserSettings) ToStruct() (cefBrowserSettings *C.struct__cef_browser_
 	cefBrowserSettings.webgl = cefStateFromBool(b.Webgl)
 	cefBrowserSettings.accelerated_compositing = cefStateFromBool(b.AcceleratedCompositing)
 	return cefBrowserSettings
+}
+
+func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
+	// Initialize cef_settings_t structure.
+	cefSettings = (*C.struct__cef_settings_t)(C.calloc(1, C.sizeof_struct__cef_settings_t))
+	cefSettings.size = C.sizeof_struct__cef_settings_t
+	cefSettings.cache_path = CEFString(settings.CachePath)
+	cefSettings.log_severity = (C.cef_log_severity_t)(C.int(settings.LogSeverity))
+	cefSettings.log_file = CEFString(settings.LogFile)
+	if settings.ResourcesDirPath == "" && runtime.GOOS != "darwin" {
+		// Setting this path is required for the tests to run fine.
+		cwd, _ := os.Getwd()
+		settings.ResourcesDirPath = cwd
+	}
+
+	cefSettings.resources_dir_path = CEFString(settings.ResourcesDirPath)
+	if settings.LocalesDirPath == "" && runtime.GOOS != "darwin" {
+		// Setting this path is required for the tests to run fine.
+		cwd, _ := os.Getwd()
+		settings.LocalesDirPath = cwd + "/locales"
+	}
+	cefSettings.locales_dir_path = CEFString(settings.LocalesDirPath)
+	cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
+	cefSettings.no_sandbox = C.int(1)
+	return
 }
 
 func Initialize(settings Settings) int {
@@ -201,74 +223,7 @@ func Initialize(settings Settings) int {
 		return 0
 	}
 
-	// Initialize cef_settings_t structure.
-	var cefSettings *C.struct__cef_settings_t
-	cefSettings = (*C.struct__cef_settings_t)(
-		C.calloc(1, C.sizeof_struct__cef_settings_t))
-	cefSettings.size = C.sizeof_struct__cef_settings_t
-
-	// cache_path
-	// ----------
-	if settings.CachePath != "" {
-		Logger.Println("CachePath=", settings.CachePath)
-	}
-	var cachePath *C.char = C.CString(settings.CachePath)
-	defer C.free(unsafe.Pointer(cachePath))
-	C.cef_string_from_utf8(cachePath, C.strlen(cachePath),
-		&cefSettings.cache_path)
-
-	// log_severity
-	// ------------
-	cefSettings.log_severity =
-		(C.cef_log_severity_t)(C.int(settings.LogSeverity))
-
-	// log_file
-	// --------
-	if settings.LogFile != "" {
-		Logger.Println("LogFile=", settings.LogFile)
-	}
-	var logFile *C.char = C.CString(settings.LogFile)
-	defer C.free(unsafe.Pointer(logFile))
-	C.cef_string_from_utf8(logFile, C.strlen(logFile),
-		&cefSettings.log_file)
-
-	// resources_dir_path
-	// ------------------
-	if settings.ResourcesDirPath == "" && runtime.GOOS != "darwin" {
-		// Setting this path is required for the tests to run fine.
-		cwd, _ := os.Getwd()
-		settings.ResourcesDirPath = cwd
-	}
-	if settings.ResourcesDirPath != "" {
-		Logger.Println("ResourcesDirPath=", settings.ResourcesDirPath)
-	}
-	var resourcesDirPath *C.char = C.CString(settings.ResourcesDirPath)
-	defer C.free(unsafe.Pointer(resourcesDirPath))
-	C.cef_string_from_utf8(resourcesDirPath, C.strlen(resourcesDirPath),
-		&cefSettings.resources_dir_path)
-
-	// locales_dir_path
-	// ----------------
-	if settings.LocalesDirPath == "" && runtime.GOOS != "darwin" {
-		// Setting this path is required for the tests to run fine.
-		cwd, _ := os.Getwd()
-		settings.LocalesDirPath = cwd + "/locales"
-	}
-	if settings.LocalesDirPath != "" {
-		Logger.Println("LocalesDirPath=", settings.LocalesDirPath)
-	}
-	var localesDirPath *C.char = C.CString(settings.LocalesDirPath)
-	defer C.free(unsafe.Pointer(localesDirPath))
-	C.cef_string_from_utf8(localesDirPath, C.strlen(localesDirPath),
-		&cefSettings.locales_dir_path)
-
-	cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
-
-	// no_sandbox
-	// ----------
-	cefSettings.no_sandbox = C.int(1)
-
-	ret := C.cef_initialize(_MainArgs, cefSettings, _AppHandler, _SandboxInfo)
+	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	return int(ret)
 }
 
@@ -280,11 +235,11 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
 
-	return &Browser{C.cef_browser_host_create_browser_sync(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToStruct(), nil)}
+	return &Browser{C.cef_browser_host_create_browser_sync(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)}
 }
 
 type Browser struct {
-    cbrowser *C.cef_browser_t
+	cbrowser *C.cef_browser_t
 }
 
 func (b *Browser) ExecuteJavaScript(code, url string, startLine int) {

@@ -19,8 +19,7 @@ import (
 
 var _Argv []*C.char = make([]*C.char, len(os.Args))
 
-func FillMainArgs(mainArgs *C.struct__cef_main_args_t,
-	appHandle unsafe.Pointer) {
+func FillMainArgs(mainArgs *C.struct__cef_main_args_t, appHandle unsafe.Pointer) {
 	// On Linux appHandle is nil.
 	Logger.Println("FillMainArgs, argc=", len(os.Args))
 	for i, arg := range os.Args {
