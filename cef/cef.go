@@ -100,7 +100,8 @@ func _InitializeGlobalCStructures() {
 }
 
 func ExecuteProcess(appHandle unsafe.Pointer) int {
-	Logger.Println("ExecuteProcess, args=", os.Args, os.Getpid())
+	os.Args = append(os.Args, "--subprocess")
+	Logger.Println("ExecuteProcess, args=", os.Args)
 
 	_InitializeGlobalCStructures()
 	FillMainArgs(_MainArgs, appHandle)
