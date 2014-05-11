@@ -45,6 +45,15 @@ void ExecuteJavaScript(cef_browser_t* browser, const char* code, const char* scr
     cef_string_userfree_utf16_free(codeCef);
 }
 
+void LoadURL(cef_browser_t* browser, const char* url)
+{
+    cef_frame_t * frame = browser->get_main_frame(browser);
+    cef_string_t * urlCef = cef_string_userfree_utf16_alloc();
+    cef_string_from_utf8(url, strlen(url), urlCef);
+    frame->load_url(frame, codeCef, urlVal, start_line);
+    cef_string_userfree_utf16_free(urlCef);
+}
+
 */
 import "C"
 import (
@@ -237,6 +246,12 @@ func (b *Browser) ExecuteJavaScript(code, url string, startLine int) {
 	urlCString := C.CString(url)
 	defer C.free(unsafe.Pointer(urlCString))
 	C.ExecuteJavaScript(b.cbrowser, codeCString, urlCString, C.int(startLine))
+}
+
+func (b *Browser) LoadURL(url string) {
+	urlCString := C.CString(url)
+	defer C.free(unsafe.Pointer(urlCString))
+	C.LoadURL(b.cbrowser, urlCString)
 }
 
 func RunMessageLoop() {
