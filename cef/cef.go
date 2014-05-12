@@ -50,7 +50,7 @@ void LoadURL(cef_browser_t* browser, const char* url)
     cef_frame_t * frame = browser->get_main_frame(browser);
     cef_string_t * urlCef = cef_string_userfree_utf16_alloc();
     cef_string_from_utf8(url, strlen(url), urlCef);
-    frame->load_url(frame, codeCef, urlVal, start_line);
+    frame->load_url(frame, urlCef);
     cef_string_userfree_utf16_free(urlCef);
 }
 
