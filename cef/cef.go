@@ -231,7 +231,7 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 	var windowInfo *C.cef_window_info_t
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
-        C.cef_browser_host_create_browser_sync(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
+        C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
 	return &Browser{}
 }
 
