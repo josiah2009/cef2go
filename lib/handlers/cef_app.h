@@ -6,6 +6,7 @@
 
 #include "handlers/cef_base.h"
 #include "include/capi/cef_app_capi.h"
+#include "include/capi/cef_browser_process_handler_capi.h"
 
 // ----------------------------------------------------------------------------
 // cef_app_t
@@ -45,6 +46,11 @@ void CEF_CALLBACK on_register_custom_schemes(
     DEBUG_CALLBACK("on_register_custom_schemes\n");
 }
 
+void CEF_CALLBACK on_context_initialized(
+      struct _cef_browser_process_handler_t* self) {
+    DEBUG_CALLBACK("on_context_initialized!\n");
+}
+
 ///
 // Return the handler for resource bundle events. If
 // CefSettings.pack_loading_disabled is true (1) a handler must be returned.
@@ -63,8 +69,12 @@ struct _cef_resource_bundle_handler_t*
 ///
 struct _cef_browser_process_handler_t* 
         CEF_CALLBACK get_browser_process_handler(struct _cef_app_t* self) {
+    cef_browser_process_handler_t* h = (cef_browser_process_handler_t*)calloc(1, sizeof(cef_browser_process_handler_t));
+    // set the size member of cef_base_t appropriately
+    h->base.size = sizeof(cef_browser_process_handler_t);
+    h->on_context_initialized = on_context_initialized;
     DEBUG_CALLBACK("get_browser_process_handler\n");
-    return NULL;
+    return h;
 }
 
 ///

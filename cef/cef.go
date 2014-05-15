@@ -1,5 +1,3 @@
-// Copyright (c) 2014 The cef2go authors. All rights reserved.
-// License: BSD 3-clause.
 // Website: https://github.com/CzarekTomczak/cef2go
 
 package cef
@@ -156,7 +154,6 @@ func _InitializeGlobalCStructures() {
 }
 
 func ExecuteProcess(appHandle unsafe.Pointer) int {
-	os.Args = append(os.Args, "--subprocess")
 	Logger.Println("ExecuteProcess, args=", os.Args)
 
 	_InitializeGlobalCStructures()
@@ -222,6 +219,8 @@ func Initialize(settings Settings) int {
 	}
 
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
+        SetLifespanHandler(new(DefaultLifeSpanHandler))
+        InitializeLifeSpanHandler()
 	return int(ret)
 }
 
@@ -232,8 +231,8 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 	var windowInfo *C.cef_window_info_t
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
-
-	return &Browser{C.cef_browser_host_create_browser_sync(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)}
+        C.cef_browser_host_create_browser_sync(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
+	return &Browser{}
 }
 
 type Browser struct {
