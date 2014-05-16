@@ -24,6 +24,8 @@ func main() {
 
 	// CEF initialize.
 	settings := cef.Settings{}
+	settings.ResourcesDirPath = cwd + "/Release"
+	settings.LocalesDirPath = cwd + "/Release/locales"
 	settings.CachePath = cwd + "/webcache"         // Set to empty to disable
 	settings.LogSeverity = cef.LOGSEVERITY_DEFAULT // LOGSEVERITY_VERBOSE
 	settings.LogFile = cwd + "/debug.log"
@@ -36,12 +38,9 @@ func main() {
 	gtk.ConnectDestroySignal(window, OnDestroyWindow)
 
 	// Create browser.
-	browserSettings := cef.BrowserSettings{}
+	browserSettings := &cef.BrowserSettings{}
 	url := "file://" + cwd + "/example.html"
-	browser := cef.CreateBrowser(window, browserSettings, url)
-	frame := browser.get_main_frame()
-	frame.execute_java_script(cef.CEFString("console.log('sup');"), cef.CEFString(""), C.int(1))
-
+	cef.CreateBrowser(window, browserSettings, url)
 	// CEF loop and shutdown.
 	cef.RunMessageLoop()
 	cef.Shutdown()

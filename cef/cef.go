@@ -218,9 +218,9 @@ func Initialize(settings Settings) int {
 		return 0
 	}
 
-	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
         SetLifespanHandler(new(DefaultLifeSpanHandler))
         InitializeLifeSpanHandler()
+	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	return int(ret)
 }
 
@@ -232,6 +232,7 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
         C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
+	Logger.Println("CreateBrowser async")
 	return &Browser{}
 }
 
