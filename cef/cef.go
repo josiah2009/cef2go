@@ -219,7 +219,6 @@ func Initialize(settings Settings) int {
 	}
 
         SetLifespanHandler(new(DefaultLifeSpanHandler))
-        InitializeLifeSpanHandler()
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	return int(ret)
 }

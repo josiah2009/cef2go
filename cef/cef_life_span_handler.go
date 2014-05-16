@@ -35,13 +35,8 @@ func go_OnAfterCreated(self *C.struct__cef_life_span_handler_t, browser *C.cef_b
 		globalLifespanHandler.OnAfterCreated(&Browser{browser})
 	}
 }
-func InitializeLifeSpanHandler() *C.struct__cef_life_span_handler_t {
-	var handler *C.struct__cef_life_span_handler_t
-	handler = (*C.struct__cef_life_span_handler_t)(C.calloc(1, C.sizeof_struct__cef_life_span_handler_t))
-	C.initialize_life_span_handler(handler)
-	return handler
-}
 
 func SetLifespanHandler(handler LifeSpanHandler) {
 	globalLifespanHandler = handler
 }
+

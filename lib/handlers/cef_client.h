@@ -2,10 +2,9 @@
 // License: BSD 3-clause.
 // Website: https://github.com/CzarekTomczak/cefcapi
 
-#pragma once
-
 #include "handlers/cef_base.h"
 #include "include/capi/cef_client_capi.h"
+#include "include/capi/cef_life_span_handler_capi.h"
 
 // ----------------------------------------------------------------------------
 // struct _cef_client_t
@@ -102,13 +101,26 @@ struct _cef_keyboard_handler_t* CEF_CALLBACK get_keyboard_handler(
     return NULL;
 }
 
+void CEF_CALLBACK cef_life_span_handler_t_on_after_created(
+        struct _cef_life_span_handler_t* self,
+        struct _cef_browser_t* browser) {
+    DEBUG_CALLBACK("client->LifeSpanHandler->on_after_created\n");
+    go_OnAfterCreated(self, browser);
+}
+
 ///
 // Return the handler for browser life span events.
 ///
 struct _cef_life_span_handler_t* CEF_CALLBACK get_life_span_handler(
         struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_life_span_handler\n");
-    return NULL;
+    cef_life_span_handler_t* lifeHandler = (cef_life_span_handler_t*)calloc(1, sizeof(cef_life_span_handler_t));
+    DEBUG_CALLBACK("client->initialize_life_span_handler\n");
+    lifeHandler->base.size = sizeof(cef_life_span_handler_t);
+    initialize_cef_base((cef_base_t*) lifeHandler);
+    // callbacks
+    lifeHandler->on_after_created = cef_life_span_handler_t_on_after_created;
+    return lifeHandler;
+    // return NULL;
 }
 
 ///
