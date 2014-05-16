@@ -23,7 +23,7 @@ type LifeSpanHandler interface {
 type DefaultLifeSpanHandler struct{}
 
 func (l *DefaultLifeSpanHandler) OnAfterCreated(browser *Browser) {
-	fmt.Printf("created browser, handled by lifespan %v", browser)
+	fmt.Printf("created browser, handled by lifespan %v %v", browser)
 }
 
 var _LifeSpanHandler *C.struct__cef_life_span_handler_t // requires reference counting
