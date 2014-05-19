@@ -147,7 +147,7 @@ func Initialize(settings Settings) int {
 		return 0
 	}
 
-	SetLifespanHandler(new(DefaultLifeSpanHandler))
+	globalLifespanHandler = new(LifeSpanHandler)
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	Logger.Println("Waiting for onContextInitialized")
 	WaitForContextInitialized()
@@ -171,6 +171,6 @@ func Shutdown() {
 }
 
 func WaitForContextInitialized() {
-        Logger.Println("WaitForContextInitialized")
+	Logger.Println("WaitForContextInitialized")
 	// <-contextInitialized
 }

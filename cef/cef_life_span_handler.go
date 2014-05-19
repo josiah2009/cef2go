@@ -13,21 +13,28 @@ import "C"
 
 import (
 	"fmt"
+	"unsafe"
 )
 
-type LifeSpanHandler interface {
-	OnAfterCreated(browser *Browser)
+type LifeSpanHandler struct {
+	browsers map[unsafe.Pointer]chan *Browser
 }
 
-type DefaultLifeSpanHandler struct{}
+func (l *LifeSpanHandler) RegisterAndWaitForBrowser(hwnd unsafe.Pointer) (browser *Browser) {
+	l.browsers[hwnd] = make(chan *Browser)
+	return <-l.browsers[hwnd]
+}
 
-func (l *DefaultLifeSpanHandler) OnAfterCreated(browser *Browser) {
-	fmt.Printf("created browser, handled by lifespan %v %v", browser, browser.GetWindowHandle())
+func (l *LifeSpanHandler) OnAfterCreated(browser *Browser) {
+	hwnd = unsafe.Pointer(browser.GetWindowHandle())
+	fmt.Printf("created browser, handled by lifespan %v %v", browser, hwnd)
+	b, ok := l.browsers[hwnd]
+	if ok == true {
+		b <- browser
+	} else {
+		fmt.Printf("Failed looking up browser at hwnd %v", hwnd)
+	}
 }
 
 var _LifeSpanHandler *C.struct__cef_life_span_handler_t // requires reference counting
-var globalLifespanHandler LifeSpanHandler
-
-func SetLifespanHandler(handler LifeSpanHandler) {
-	globalLifespanHandler = handler
-}
+var globalLifespanHandler *LifeSpanHandler
