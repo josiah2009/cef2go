@@ -26,7 +26,7 @@ func (l *LifeSpanHandler) RegisterAndWaitForBrowser(hwnd unsafe.Pointer) (browse
 }
 
 func (l *LifeSpanHandler) OnAfterCreated(browser *Browser) {
-	hwnd = unsafe.Pointer(browser.GetWindowHandle())
+	hwnd := unsafe.Pointer(browser.GetWindowHandle())
 	fmt.Printf("created browser, handled by lifespan %v %v", browser, hwnd)
 	b, ok := l.browsers[hwnd]
 	if ok == true {

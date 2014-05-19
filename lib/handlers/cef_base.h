@@ -14,7 +14,7 @@
 
 // Print only the first execution of the callback,
 // ignore the subsequent.
-#define DEBUG_CALLBACK(x) { printf(x); }
+#define DEBUG_CALLBACK(x) { go_Log(x); }
 
 // ----------------------------------------------------------------------------
 // cef_base_t
@@ -29,8 +29,8 @@
 // Increment the reference count.
 ///
 int CEF_CALLBACK add_ref(cef_base_t* self) {
-    DEBUG_CALLBACK("cef_base_t.add_ref\n");
     if (DEBUG_REFERENCE_COUNTING)
+        DEBUG_CALLBACK("cef_base_t.add_ref\n");
         printf("+");
     return 1;
 }
@@ -40,8 +40,8 @@ int CEF_CALLBACK add_ref(cef_base_t* self) {
 // remain.
 ///
 int CEF_CALLBACK release(cef_base_t* self) {
-    DEBUG_CALLBACK("cef_base_t.release\n");
     if (DEBUG_REFERENCE_COUNTING)
+        DEBUG_CALLBACK("cef_base_t.release\n");
         printf("-");
     return 1;
 }
@@ -50,14 +50,13 @@ int CEF_CALLBACK release(cef_base_t* self) {
 // Returns the current number of references.
 ///
 int CEF_CALLBACK get_refct(cef_base_t* self) {
-    DEBUG_CALLBACK("cef_base_t.get_refct\n");
     if (DEBUG_REFERENCE_COUNTING)
+        DEBUG_CALLBACK("cef_base_t.get_refct\n");
         printf("=");
     return 1;
 }
 
 void initialize_cef_base(cef_base_t* base) {
-    printf("initialize_cef_base\n");
     // Check if "size" member was set.
     size_t size = base->size;
     // Let's print the size in case sizeof was used

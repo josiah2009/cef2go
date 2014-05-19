@@ -95,7 +95,7 @@ func _InitializeGlobalCStructures() {
 }
 
 func ExecuteProcess(appHandle unsafe.Pointer) int {
-	Logger.Println("ExecuteProcess, args=", os.Args)
+	Logger.Println("ExecuteProcess, args=", os.Args, os.Getpid())
 
 	_InitializeGlobalCStructures()
 	FillMainArgs(_MainArgs, appHandle)
@@ -108,6 +108,7 @@ func ExecuteProcess(appHandle unsafe.Pointer) int {
 	if exitCode >= 0 {
 		os.Exit(int(exitCode))
 	}
+	Logger.Println("Finished ExecuteProcess, args=", os.Args, os.Getpid(), exitCode)
 	return int(exitCode)
 }
 
@@ -147,7 +148,7 @@ func Initialize(settings Settings) int {
 		return 0
 	}
 
-	globalLifespanHandler = new(LifeSpanHandler)
+	globalLifespanHandler = &LifeSpanHandler{make(map[unsafe.Pointer]chan *Browser)}
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	Logger.Println("Waiting for onContextInitialized")
 	WaitForContextInitialized()
