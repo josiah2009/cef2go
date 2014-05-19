@@ -14,7 +14,7 @@
 
 // Print only the first execution of the callback,
 // ignore the subsequent.
-#define DEBUG_CALLBACK(x) { static int first_call = 1; if (first_call == 1) { first_call = 0; printf(x); } }
+#define DEBUG_CALLBACK(x) { printf(x); }
 
 // ----------------------------------------------------------------------------
 // cef_base_t

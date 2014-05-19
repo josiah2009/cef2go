@@ -171,5 +171,6 @@ func Shutdown() {
 }
 
 func WaitForContextInitialized() {
-	<-contextInitialized
+        Logger.Println("WaitForContextInitialized")
+	// <-contextInitialized
 }

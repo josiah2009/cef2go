@@ -70,11 +70,14 @@ struct _cef_resource_bundle_handler_t*
 ///
 struct _cef_browser_process_handler_t* 
         CEF_CALLBACK get_browser_process_handler(struct _cef_app_t* self) {
-    cef_browser_process_handler_t* h = (cef_browser_process_handler_t*)calloc(1, sizeof(cef_browser_process_handler_t));
+    DEBUG_CALLBACK("get_browser_process_handler\n");
+    // cef_browser_process_handler_t* h = (cef_browser_process_handler_t*)calloc(1, sizeof(cef_browser_process_handler_t));
     // set the size member of cef_base_t appropriately
-    h->base.size = sizeof(cef_browser_process_handler_t);
-    h->on_context_initialized = on_context_initialized;
-    return h;
+    // h->base.size = sizeof(cef_browser_process_handler_t);
+    // h->on_context_initialized = on_context_initialized;
+    DEBUG_CALLBACK("DONE get_browser_process_handler\n");
+    return NULL;
+    //return h;
 }
 
 ///

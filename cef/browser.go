@@ -42,7 +42,7 @@ import (
 )
 
 func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string) (browser *Browser) {
-	Logger.Println("CreateBrowser, url=", url)
+	Logger.Println("CreateBrowser, url=", url, "hwnd=", hwnd)
 
 	// Initialize cef_window_info_t structure.
 	var windowInfo *C.cef_window_info_t
