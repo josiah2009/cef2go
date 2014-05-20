@@ -71,3 +71,4 @@ void initialize_cef_base(cef_base_t* base) {
     base->release = release;
     base->get_refct = get_refct;
 }
+

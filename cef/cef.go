@@ -149,7 +149,7 @@ func Initialize(settings Settings) int {
 		return 0
 	}
 
-	globalLifespanHandler = &LifeSpanHandler{make(map[unsafe.Pointer]chan *Browser), []*C.cef_window_info_t{}}
+	globalLifespanHandler = &LifeSpanHandler{make(map[string]chan *Browser)}
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	Logger.Println("Waiting for onContextInitialized")
 	WaitForContextInitialized()
