@@ -36,7 +36,7 @@ var Logger *log.Logger = log.New(os.Stdout, "[gtk] ", log.Lshortfile)
 
 func Initialize() {
 	C.gtk_init(nil, nil)
-	C.ConnectTerminationSignal()
+	// C.ConnectTerminationSignal()
 }
 
 func CreateWindow(title string, width int, height int) unsafe.Pointer {
@@ -46,8 +46,7 @@ func CreateWindow(title string, width int, height int) unsafe.Pointer {
 	window := C.gtk_window_new(C.GTK_WINDOW_TOPLEVEL)
 
 	// Default size.
-	C.gtk_window_set_default_size(C.ToGtkWindow(window),
-		C.gint(width), C.gint(height))
+	C.gtk_window_set_default_size(C.ToGtkWindow(window), C.gint(width), C.gint(height))
 
 	// Center.
 	C.gtk_window_set_position(C.ToGtkWindow(window), C.GTK_WIN_POS_CENTER)
