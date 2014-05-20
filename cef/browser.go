@@ -34,6 +34,12 @@ cef_window_handle_t GetWindowHandle(cef_browser_t* browser)
     cef_browser_host_t * host = browser->get_host(browser);
     return host->get_window_handle(host);
 }
+
+cef_string_userfree_t GetURL(cef_browser_t* browser) 
+{
+    cef_frame_t * frame = browser->get_main_frame(browser);
+    return frame->get_url(frame);
+}
 */
 import "C"
 
@@ -42,15 +48,15 @@ import (
 )
 
 func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string) (browser *Browser) {
-	Logger.Println("CreateBrowser, url=", url, "hwnd=", hwnd)
+    Logger.Println("CreateBrowser, url=", url, "hwnd=", hwnd, "on ui thread?", OnUIThread())
 
 	// Initialize cef_window_info_t structure.
 	var windowInfo *C.cef_window_info_t
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
-	Logger.Println("CreateBrowser async", hwnd)
-	return globalLifespanHandler.RegisterAndWaitForBrowser(hwnd)
+	Logger.Println("CreateBrowser async", hwnd, windowInfo.widget)
+	return globalLifespanHandler.RegisterAndWaitForBrowser(hwnd, windowInfo)
 }
 
 type Browser struct {
@@ -73,6 +79,13 @@ func (b *Browser) LoadURL(url string) {
 
 func (b *Browser) GetWindowHandle() C.cef_window_handle_t {
 	return C.GetWindowHandle(b.cbrowser)
+}
+
+func (b *Browser) GetURL() string {
+      cs := C.GetURL(b.cbrowser)
+      gos := C.GoString(cs)
+      C.cef_string_userfree_free(cs)
+      return gos
 }
 
 type BrowserSettings struct {

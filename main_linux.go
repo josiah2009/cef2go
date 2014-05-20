@@ -40,7 +40,10 @@ func main() {
 	// Create browser.
 	browserSettings := &cef.BrowserSettings{}
 	url := "file://" + cwd + "/example.html"
-	cef.CreateBrowser(window, browserSettings, url)
+	go func() {
+          browser := cef.CreateBrowser(window, browserSettings, url)
+          browser.ExecuteJavaScript("console.log('we outchea');", "sup.js", 1)
+        }()
 	// CEF loop and shutdown.
 	cef.RunMessageLoop()
 	cef.Shutdown()

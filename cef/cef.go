@@ -27,6 +27,7 @@ CEF capi fixes
 #include "include/capi/cef_app_capi.h"
 #include "handlers/cef_app.h"
 #include "handlers/cef_client.h"
+
 */
 import "C"
 import (
@@ -148,7 +149,7 @@ func Initialize(settings Settings) int {
 		return 0
 	}
 
-	globalLifespanHandler = &LifeSpanHandler{make(map[unsafe.Pointer]chan *Browser)}
+	globalLifespanHandler = &LifeSpanHandler{make(map[unsafe.Pointer]chan *Browser), []*C.cef_window_info_t{}}
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	Logger.Println("Waiting for onContextInitialized")
 	WaitForContextInitialized()
@@ -174,4 +175,8 @@ func Shutdown() {
 func WaitForContextInitialized() {
 	Logger.Println("WaitForContextInitialized")
 	// <-contextInitialized
+}
+
+func OnUIThread() bool {
+      return C.cef_currently_on(C.TID_UI) == 1
 }
