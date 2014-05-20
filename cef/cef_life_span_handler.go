@@ -12,23 +12,17 @@ package cef
 import "C"
 
 type LifeSpanHandler struct {
-	browsers map[string]chan *Browser
+	browser chan *Browser
 }
 
 func (l *LifeSpanHandler) RegisterAndWaitForBrowser(url string) (browser *Browser) {
-	l.browsers[url] = make(chan *Browser)
-	return <-l.browsers[url]
+	return <-l.browser
 }
 
 func (l *LifeSpanHandler) OnAfterCreated(browser *Browser) {
 	url := browser.GetURL()
 	Logger.Printf("created browser, handled by lifespan %v, url %s\n", browser, url)
-	b, ok := l.browsers[url]
-	if ok == true {
-		b <- browser
-	} else {
-		Logger.Printf("Failed looking up browser at url %s\n", url)
-	}
+	l.browser <- browser
 }
 
 var _LifeSpanHandler *C.struct__cef_life_span_handler_t // requires reference counting
