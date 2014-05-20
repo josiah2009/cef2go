@@ -31,7 +31,6 @@
 int CEF_CALLBACK add_ref(cef_base_t* self) {
     if (DEBUG_REFERENCE_COUNTING)
         DEBUG_CALLBACK("cef_base_t.add_ref\n");
-        printf("+");
     return 1;
 }
 
@@ -42,7 +41,6 @@ int CEF_CALLBACK add_ref(cef_base_t* self) {
 int CEF_CALLBACK release(cef_base_t* self) {
     if (DEBUG_REFERENCE_COUNTING)
         DEBUG_CALLBACK("cef_base_t.release\n");
-        printf("-");
     return 1;
 }
 
@@ -52,7 +50,6 @@ int CEF_CALLBACK release(cef_base_t* self) {
 int CEF_CALLBACK get_refct(cef_base_t* self) {
     if (DEBUG_REFERENCE_COUNTING)
         DEBUG_CALLBACK("cef_base_t.get_refct\n");
-        printf("=");
     return 1;
 }
 

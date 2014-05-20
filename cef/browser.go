@@ -44,7 +44,7 @@ cef_string_utf8_t * cefStringToUtf8(cef_string_t * source) {
     return output;
 }
 
-cef_string_utf8_t * GetURL(cef_browser_t* browser) 
+cef_string_utf8_t * GetURL(cef_browser_t* browser)
 {
     cef_frame_t * frame = browser->get_main_frame(browser);
     cef_string_t * str = frame->get_url(frame);
@@ -61,7 +61,7 @@ import (
 )
 
 func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string) (browser *Browser) {
-    Logger.Println("CreateBrowser, url=", url, "hwnd=", hwnd, "on ui thread?", OnUIThread())
+	Logger.Println("CreateBrowser, url=", url, "hwnd=", hwnd, "on ui thread?", OnUIThread())
 
 	// Initialize cef_window_info_t structure.
 	var windowInfo *C.cef_window_info_t
@@ -69,7 +69,7 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 	FillWindowInfo(windowInfo, hwnd)
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
 	Logger.Println("CreateBrowser async", url)
-        return globalLifespanHandler.RegisterAndWaitForBrowser(url)
+	return globalLifespanHandler.RegisterAndWaitForBrowser(url)
 }
 
 type Browser struct {
@@ -95,9 +95,9 @@ func (b *Browser) GetWindowHandle() C.cef_window_handle_t {
 }
 
 func (b *Browser) GetURL() string {
-      cs := C.GetURL(b.cbrowser)
-      defer C.cef_string_userfree_utf8_free(cs)
-      return C.GoString(cs.str)
+	cs := C.GetURL(b.cbrowser)
+	defer C.cef_string_userfree_utf8_free(cs)
+	return C.GoString(cs.str)
 }
 
 type BrowserSettings struct {

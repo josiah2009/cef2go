@@ -146,7 +146,7 @@ struct _cef_render_handler_t* CEF_CALLBACK get_render_handler(
 ///
 struct _cef_request_handler_t* CEF_CALLBACK get_request_handler(
         struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_request_handler\n");
+    // DEBUG_CALLBACK("get_request_handler\n");
     return NULL;
 }
 

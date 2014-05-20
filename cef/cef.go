@@ -178,5 +178,5 @@ func WaitForContextInitialized() {
 }
 
 func OnUIThread() bool {
-      return C.cef_currently_on(C.TID_UI) == 1
+	return C.cef_currently_on(C.TID_UI) == 1
 }

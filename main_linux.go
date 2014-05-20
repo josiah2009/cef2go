@@ -6,19 +6,19 @@ package main
 
 import "C"
 import (
+	"fmt"
 	"github.com/paperlesspost/cef2go/cef"
 	"github.com/paperlesspost/cef2go/gtk"
 	"log"
 	"os"
 )
 
-var Logger *log.Logger = log.New(os.Stdout, "[main] ", log.Lshortfile)
-
 func main() {
 	// TODO: It should be executable's directory use
 	// rather than working directory.
 	cwd, _ := os.Getwd()
-
+	logger := log.New(os.Stdout, fmt.Sprintf("[%d] ", os.Getpid()), log.Lshortfile)
+	cef.SetLogger(logger)
 	// CEF subprocesses.
 	cef.ExecuteProcess(nil)
 
@@ -27,7 +27,7 @@ func main() {
 	settings.ResourcesDirPath = cwd + "/Release"
 	settings.LocalesDirPath = cwd + "/Release/locales"
 	settings.CachePath = cwd + "/webcache"         // Set to empty to disable
-	settings.LogSeverity = cef.LOGSEVERITY_DEFAULT // LOGSEVERITY_VERBOSE
+	settings.LogSeverity = cef.LOGSEVERITY_VERBOSE // LOGSEVERITY_VERBOSE
 	settings.LogFile = cwd + "/debug.log"
 	settings.RemoteDebuggingPort = 7000
 	cef.Initialize(settings)
@@ -41,9 +41,9 @@ func main() {
 	browserSettings := &cef.BrowserSettings{}
 	url := "file://" + cwd + "/example.html"
 	go func() {
-          browser := cef.CreateBrowser(window, browserSettings, url)
-          browser.ExecuteJavaScript("console.log('we outchea');", "sup.js", 1)
-        }()
+		browser := cef.CreateBrowser(window, browserSettings, url)
+		browser.ExecuteJavaScript("console.log('we outchea');", "sup.js", 1)
+	}()
 	// CEF loop and shutdown.
 	cef.RunMessageLoop()
 	cef.Shutdown()
