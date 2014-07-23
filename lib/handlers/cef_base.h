@@ -14,7 +14,7 @@
 
 // Print only the first execution of the callback,
 // ignore the subsequent.
-#define DEBUG_CALLBACK(x) { go_Log(x); }
+#define DEBUG_CALLBACK(x) { }
 
 // ----------------------------------------------------------------------------
 // cef_base_t

@@ -37,6 +37,7 @@ import (
 )
 
 var Logger *log.Logger = log.New(os.Stdout, "[cef] ", log.Lshortfile)
+var Verbose bool = false
 
 var _MainArgs *C.struct__cef_main_args_t
 var _AppHandler *C.cef_app_t               // requires reference counting
@@ -83,6 +84,10 @@ func CEFString(original string) (final *C.cef_string_t) {
 
 func SetLogger(logger *log.Logger) {
 	Logger = logger
+}
+
+func SetVerbose(verbose bool) {
+	Verbose = verbose
 }
 
 func _InitializeGlobalCStructures() {

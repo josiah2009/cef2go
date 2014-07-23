@@ -10,7 +10,6 @@ import "C"
 
 //export go_OnContextInitialized
 func go_OnContextInitialized() {
-	Logger.Println("go_OnContextInitialized")
 	contextInitialized <- 1
 }
 
@@ -23,5 +22,7 @@ func go_OnAfterCreated(self *C.struct__cef_life_span_handler_t, browser *C.cef_b
 
 //export go_Log
 func go_Log(str *C.char) {
-	Logger.Print(C.GoString(str))
+	if Verbose == true {
+		Logger.Print(C.GoString(str))
+	}
 }
