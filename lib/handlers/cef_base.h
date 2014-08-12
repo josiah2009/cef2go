@@ -7,31 +7,16 @@
 #include "include/capi/cef_base_capi.h"
 #include <stdio.h>
 
-// Set to 1 to check if add_ref() and release()
-// are called and to track the total number of calls.
-// add_ref will be printed as "+", release as "-".
-#define DEBUG_REFERENCE_COUNTING 0
 
 // Print only the first execution of the callback,
 // ignore the subsequent.
 #define DEBUG_CALLBACK(x) { go_Log(x); }
 
-// ----------------------------------------------------------------------------
-// cef_base_t
-// ----------------------------------------------------------------------------
-
-///
-// Structure defining the reference count implementation functions. All
-// framework structures must include the cef_base_t structure first.
-///
-
 ///
 // Increment the reference count.
 ///
 int CEF_CALLBACK add_ref(cef_base_t* self) {
-    if (DEBUG_REFERENCE_COUNTING)
-        DEBUG_CALLBACK("cef_base_t.add_ref\n");
-    return 1;
+    return go_AddRef((void *) self);
 }
 
 ///
@@ -39,19 +24,22 @@ int CEF_CALLBACK add_ref(cef_base_t* self) {
 // remain.
 ///
 int CEF_CALLBACK release(cef_base_t* self) {
-    if (DEBUG_REFERENCE_COUNTING)
-        DEBUG_CALLBACK("cef_base_t.release\n");
-    return 1;
+    return go_Release((void *) self);
 }
 
 ///
 // Returns the current number of references.
 ///
 int CEF_CALLBACK get_refct(cef_base_t* self) {
-    if (DEBUG_REFERENCE_COUNTING)
-        DEBUG_CALLBACK("cef_base_t.get_refct\n");
-    return 1;
+    return go_GetRefCount((void *) self);
 }
+
+int add_refVoid(void* self) {
+    ((cef_base_t*) self)->add_ref((cef_base_t*) self);
+}
+int releaseVoid(void* self) {
+    ((cef_base_t*) self)->release((cef_base_t*) self);
+} 
 
 void initialize_cef_base(cef_base_t* base) {
     // Check if "size" member was set.
@@ -67,5 +55,6 @@ void initialize_cef_base(cef_base_t* base) {
     base->add_ref = add_ref;
     base->release = release;
     base->get_refct = get_refct;
+    go_CreateRef((void *) base);
 }
 

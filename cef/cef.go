@@ -88,14 +88,14 @@ func SetLogger(logger *log.Logger) {
 
 func _InitializeGlobalCStructures() {
 	_MainArgs = (*C.struct__cef_main_args_t)(C.calloc(1, C.sizeof_struct__cef_main_args_t))
-        go_AddRef(unsafe.Pointer(_MainArgs))
+	go_AddRef(unsafe.Pointer(_MainArgs))
 
 	_AppHandler = (*C.cef_app_t)(C.calloc(1, C.sizeof_cef_app_t))
-        go_AddRef(unsafe.Pointer(_AppHandler))
+	go_AddRef(unsafe.Pointer(_AppHandler))
 	C.initialize_app_handler(_AppHandler)
 
 	_ClientHandler = (*C.struct__cef_client_t)(C.calloc(1, C.sizeof_struct__cef_client_t))
-        go_AddRef(unsafe.Pointer(_ClientHandler))
+	go_AddRef(unsafe.Pointer(_ClientHandler))
 	C.initialize_client_handler(_ClientHandler)
 }
 
@@ -135,7 +135,7 @@ func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
 	cefSettings.resources_dir_path = *CEFString(settings.ResourcesDirPath)
 	cefSettings.locales_dir_path = *CEFString(settings.LocalesDirPath)
 	cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
-        cefSettings.javascript_flags = *CEFString(settings.JavaScriptFlags)
+	cefSettings.javascript_flags = *CEFString(settings.JavaScriptFlags)
 	cefSettings.no_sandbox = C.int(1)
 	return
 }
