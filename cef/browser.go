@@ -69,7 +69,12 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 	FillWindowInfo(windowInfo, hwnd)
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
 	Logger.Println("CreateBrowser async", url)
-	return globalLifespanHandler.RegisterAndWaitForBrowser(url)
+	b, err := globalLifespanHandler.RegisterAndWaitForBrowser(url)
+	if err != nil {
+		Logger.Println("ERROR", err)
+		panic("Failed to create a browser")
+	}
+	return b
 }
 
 type Browser struct {

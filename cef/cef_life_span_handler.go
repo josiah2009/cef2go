@@ -11,12 +11,23 @@ package cef
 */
 import "C"
 
+import (
+	"errors"
+	"time"
+)
+
 type LifeSpanHandler struct {
 	browser chan *Browser
 }
 
-func (l *LifeSpanHandler) RegisterAndWaitForBrowser(url string) (browser *Browser) {
-	return <-l.browser
+func (l *LifeSpanHandler) RegisterAndWaitForBrowser(url string) (browser *Browser, err error) {
+	select {
+	case b := <-l.browser:
+		return b, nil
+		// browser couldnt be created
+	case <-time.After(15 * time.Second):
+		return nil, errors.New("Timedout waiting for browser to be created")
+	}
 }
 
 func (l *LifeSpanHandler) OnAfterCreated(browser *Browser) {
