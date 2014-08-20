@@ -25,7 +25,7 @@ func (l *LifeSpanHandler) RegisterAndWaitForBrowser(url string) (browser *Browse
 	case b := <-l.browser:
 		return b, nil
 		// browser couldnt be created
-	case <-time.After(15 * time.Second):
+	case <-time.After(3 * time.Second):
 		return nil, errors.New("Timedout waiting for browser to be created")
 	}
 }
