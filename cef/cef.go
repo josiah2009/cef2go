@@ -99,8 +99,16 @@ func _InitializeGlobalCStructures() {
 	C.initialize_client_handler(_ClientHandler)
 }
 
+var args []string
+
+// Appends args that get attached to each subprocess. Must be
+// called before ExecuteProcess
+func AppendArgToSubprocess(arg string) {
+  args = append(args, arg)
+}
+
 func ExecuteProcess(appHandle unsafe.Pointer) int {
-	os.Args = append(os.Args, "--subprocess")
+	os.Args = append(os.Args, args...)
 	Logger.Println("ExecuteProcess, args=", os.Args)
 
 	_InitializeGlobalCStructures()

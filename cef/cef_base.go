@@ -56,7 +56,6 @@ func go_Release(it unsafe.Pointer) int {
 			if m.Deconstructor != nil {
 				m.Deconstructor(it)
 			}
-			Logger.Println("freeing %s", it)
 			// C.free(it)
 			delete(memoryBridge, it)
 		} else {
