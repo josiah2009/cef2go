@@ -7,23 +7,19 @@ package main
 import "C"
 import (
 	"fmt"
+	"github.com/op/go-logging"
 	"github.com/paperlesspost/cef2go/cef"
 	"github.com/paperlesspost/cef2go/gtk"
-	"log"
 	"os"
 )
 
 func main() {
 	cwd, _ := os.Getwd()
+	logging.SetLevel(logging.INFO, "cef")
 	var releasePath = os.Getenv("RELEASE_PATH")
 	if releasePath == "" {
 		releasePath = cwd
 	}
-	fmt.Printf("RELEASE PATH %s", releasePath)
-	// TODO: It should be executable's directory use
-	// rather than working directory.
-	logger := log.New(os.Stdout, fmt.Sprintf("[%d] ", os.Getpid()), log.Lshortfile)
-	cef.SetLogger(logger)
 	// CEF subprocesses.
 	cef.ExecuteProcess(nil)
 

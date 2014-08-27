@@ -7,11 +7,11 @@ package main
 import (
 	"cef"
 	"cocoa"
-	"log"
+	"github.com/op/go-logging"
 	"os"
 )
 
-var Logger *log.Logger = log.New(os.Stdout, "[main] ", log.Lshortfile)
+var log = logging.MustGetLogger("cef2go")
 
 func main() {
 	// Executable's directory

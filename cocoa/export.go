@@ -14,13 +14,13 @@ import "unsafe"
 
 //export _GoDestroySignal
 func _GoDestroySignal(window unsafe.Pointer) {
-	Logger.Println("_GoDestroySignal")
+	log.Debug("_GoDestroySignal")
 	ptr := uintptr(window)
 	if callback, ok := destroySignalCallbacks[ptr]; ok {
 		delete(destroySignalCallbacks, ptr)
 		callback()
 	} else {
-		Logger.Println("WARNING: _GoDestroySignal failed, callback not found")
+		log.Warning("WARNING: _GoDestroySignal failed, callback not found")
 	}
 
 }

@@ -61,17 +61,16 @@ import (
 )
 
 func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string) (browser *Browser) {
-	Logger.Println("CreateBrowser, url=", url, "hwnd=", hwnd, "on ui thread?", OnUIThread())
+	log.Debug("CreateBrowser, url=", url, "hwnd=", hwnd, "on ui thread?", OnUIThread())
 
 	// Initialize cef_window_info_t structure.
 	var windowInfo *C.cef_window_info_t
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
-	Logger.Println("CreateBrowser async", url)
 	b, err := globalLifespanHandler.RegisterAndWaitForBrowser(url)
 	if err != nil {
-		Logger.Println("ERROR", err)
+		log.Error("ERROR %v", err)
 		panic("Failed to create a browser")
 	}
 	return b

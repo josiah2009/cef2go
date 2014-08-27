@@ -20,7 +20,7 @@ import (
 func FillMainArgs(mainArgs *C.struct__cef_main_args_t, appHandle unsafe.Pointer) {
 	var _Argv []*C.char = make([]*C.char, len(os.Args))
 	// On Linux appHandle is nil.
-	Logger.Println("FillMainArgs, argc=", len(os.Args))
+	log.Debug("FillMainArgs, argc=%d", len(os.Args))
 	for i, arg := range os.Args {
 		_Argv[C.int(i)] = C.CString(arg)
 	}
@@ -29,6 +29,6 @@ func FillMainArgs(mainArgs *C.struct__cef_main_args_t, appHandle unsafe.Pointer)
 }
 
 func FillWindowInfo(windowInfo *C.cef_window_info_t, hwnd unsafe.Pointer) {
-	Logger.Println("FillWindowInfo")
+	log.Debug("FillWindowInfo")
 	windowInfo.parent_widget = (*C.GtkWidget)(hwnd)
 }

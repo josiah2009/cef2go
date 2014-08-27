@@ -32,7 +32,7 @@ func (l *LifeSpanHandler) RegisterAndWaitForBrowser(url string) (browser *Browse
 
 func (l *LifeSpanHandler) OnAfterCreated(browser *Browser) {
 	url := browser.GetURL()
-	Logger.Printf("created browser, handled by lifespan %v, url %s\n", browser, url)
+	log.Debug("created browser, handled by lifespan %v, url %s\n", browser, url)
 	l.browser <- browser
 }
 

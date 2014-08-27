@@ -28,11 +28,10 @@ void ConnectDestroySignal(GtkWidget* window) {
 import "C"
 import "unsafe"
 import (
-	"log"
-	"os"
+	"github.com/op/go-logging"
 )
 
-var Logger *log.Logger = log.New(os.Stdout, "[gtk] ", log.Lshortfile)
+var log = logging.MustGetLogger("gtk")
 
 func Initialize() {
 	C.gtk_init(nil, nil)
@@ -40,7 +39,7 @@ func Initialize() {
 }
 
 func CreateWindow(title string, width int, height int) unsafe.Pointer {
-	Logger.Println("CreateWindow")
+	log.Debug("CreateWindow")
 
 	// Create window.
 	window := C.gtk_window_new(C.GTK_WINDOW_TOPLEVEL)
@@ -75,7 +74,7 @@ type DestroyCallback func()
 var destroySignalCallbacks map[uintptr]DestroyCallback = make(map[uintptr]DestroyCallback)
 
 func ConnectDestroySignal(window unsafe.Pointer, callback DestroyCallback) {
-	Logger.Println("ConnectDestroySignal")
+	log.Debug("ConnectDestroySignal")
 	ptr := uintptr(window)
 	destroySignalCallbacks[ptr] = callback
 	C.ConnectDestroySignal((*C.GtkWidget)(window))

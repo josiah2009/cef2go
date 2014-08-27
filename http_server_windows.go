@@ -20,7 +20,7 @@ import (
 // Imports from "main_windows.go"
 import (
 	"cef"
-	"log"
+	"github.com/op/go-logging"
 	"os"
 	"syscall"
 	"time"
@@ -56,7 +56,7 @@ func run_http_server() {
 // 3. Imports were moved to the top of the file
 // ----------------------------------------------------------------------------
 
-var Logger *log.Logger = log.New(os.Stdout, "[main] ", log.Lshortfile)
+var log = logging.MustGetLogger("cef2go")
 
 func main() {
 	go run_http_server()
@@ -74,7 +74,7 @@ func main() {
 	cef.Initialize(settings)
 
 	wndproc := syscall.NewCallback(WndProc)
-	Logger.Println("CreateWindow")
+	log.Info("CreateWindow")
 	hwnd := wingui.CreateWindow("cef2go example", wndproc)
 
 	browserSettings := cef.BrowserSettings{}

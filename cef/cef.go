@@ -31,13 +31,13 @@ CEF capi fixes
 */
 import "C"
 import (
-	"log"
+	"github.com/op/go-logging"
 	"os"
 	"time"
 	"unsafe"
 )
 
-var Logger *log.Logger = log.New(os.Stdout, "[cef] ", log.Lshortfile)
+var log = logging.MustGetLogger("cef")
 
 var _MainArgs *C.struct__cef_main_args_t
 var _AppHandler *C.cef_app_t               // requires reference counting
@@ -83,10 +83,6 @@ func CEFString(original string) (final *C.cef_string_t) {
 	return final
 }
 
-func SetLogger(logger *log.Logger) {
-	Logger = logger
-}
-
 func _InitializeGlobalCStructures() {
 	_MainArgs = (*C.struct__cef_main_args_t)(C.calloc(1, C.sizeof_struct__cef_main_args_t))
 	go_AddRef(unsafe.Pointer(_MainArgs))
@@ -101,7 +97,7 @@ func _InitializeGlobalCStructures() {
 }
 
 func ExecuteProcess(appHandle unsafe.Pointer) int {
-	Logger.Println("ExecuteProcess, args=", os.Args)
+	log.Debug("ExecuteProcess, args=%v", os.Args)
 
 	_InitializeGlobalCStructures()
 	FillMainArgs(_MainArgs, appHandle)
@@ -114,7 +110,7 @@ func ExecuteProcess(appHandle unsafe.Pointer) int {
 	if exitCode >= 0 {
 		os.Exit(int(exitCode))
 	}
-	Logger.Println("Finished ExecuteProcess, args=", os.Args, os.Getpid(), exitCode)
+	log.Debug("Finished ExecuteProcess, args=", os.Args, os.Getpid(), exitCode)
 	return int(exitCode)
 }
 
@@ -143,7 +139,7 @@ func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
 
 func Initialize(settings Settings) int {
 	contextInitialized = make(chan int)
-	Logger.Println("Initialize")
+	log.Debug("Initialize")
 
 	if _MainArgs == nil {
 		// _MainArgs structure is initialized and filled in ExecuteProcess.
@@ -151,7 +147,7 @@ func Initialize(settings Settings) int {
 		// to cef_initialize, then it would result in creation of infinite
 		// number of processes. See Issue 1199 in CEF:
 		// https://code.google.com/p/chromiumembedded/issues/detail?id=1199
-		Logger.Println("ERROR: missing a call to ExecuteProcess")
+		log.Error("ERROR: missing a call to ExecuteProcess")
 		return 0
 	}
 
@@ -165,19 +161,18 @@ func Initialize(settings Settings) int {
 }
 
 func RunMessageLoop() {
-	Logger.Println("RunMessageLoop")
+	log.Debug("RunMessageLoop")
 	C.cef_run_message_loop()
 }
 
 func QuitMessageLoop() {
-	Logger.Println("QuitMessageLoop")
+	log.Debug("QuitMessageLoop")
 	C.cef_quit_message_loop()
 }
 
 func Shutdown() {
-	Logger.Println("Shutdown")
+	log.Debug("Shutdown")
 	C.cef_shutdown()
-	// OFF: cef_sandbox_info_destroy(_SandboxInfo)
 }
 
 func OnUIThread() bool {
