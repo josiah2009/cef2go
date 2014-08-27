@@ -14,9 +14,14 @@ import (
 )
 
 func main() {
+	cwd, _ := os.Getwd()
+	var releasePath = os.Getenv("RELEASE_PATH")
+	if releasePath == "" {
+		releasePath = cwd
+	}
+	fmt.Printf("RELEASE PATH %s", releasePath)
 	// TODO: It should be executable's directory use
 	// rather than working directory.
-	cwd, _ := os.Getwd()
 	logger := log.New(os.Stdout, fmt.Sprintf("[%d] ", os.Getpid()), log.Lshortfile)
 	cef.SetLogger(logger)
 	// CEF subprocesses.
@@ -24,10 +29,10 @@ func main() {
 
 	// CEF initialize.
 	settings := cef.Settings{}
-	settings.ResourcesDirPath = cwd + "/Release"
-	settings.LocalesDirPath = cwd + "/Release/locales"
-	settings.CachePath = cwd + "/webcache"         // Set to empty to disable
-	settings.LogSeverity = cef.LOGSEVERITY_VERBOSE // LOGSEVERITY_VERBOSE
+	settings.ResourcesDirPath = releasePath
+	settings.LocalesDirPath = releasePath + "/locales"
+	settings.CachePath = cwd + "/webcache"      // Set to empty to disable
+	settings.LogSeverity = cef.LOGSEVERITY_INFO // LOGSEVERITY_VERBOSE
 	settings.LogFile = cwd + "/debug.log"
 	settings.RemoteDebuggingPort = 7000
 	cef.Initialize(settings)
@@ -39,7 +44,7 @@ func main() {
 
 	// Create browser.
 	browserSettings := &cef.BrowserSettings{}
-	url := "file://" + cwd + "/example.html"
+	url := "file://" + cwd + "/Release/example.html"
 	go func() {
 		browser := cef.CreateBrowser(window, browserSettings, url)
 		browser.ExecuteJavaScript("console.log('we outchea');", "sup.js", 1)

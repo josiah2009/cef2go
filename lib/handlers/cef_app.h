@@ -48,7 +48,6 @@ void CEF_CALLBACK on_register_custom_schemes(
 
 void CEF_CALLBACK on_context_initialized(
       struct _cef_browser_process_handler_t* self) {
-    go_OnContextInitialized();
     DEBUG_CALLBACK("on_context_initialized!\n");
 }
 

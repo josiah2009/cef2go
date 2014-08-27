@@ -33,6 +33,7 @@ import "C"
 import (
 	"log"
 	"os"
+	"time"
 	"unsafe"
 )
 
@@ -99,16 +100,7 @@ func _InitializeGlobalCStructures() {
 	C.initialize_client_handler(_ClientHandler)
 }
 
-var args []string
-
-// Appends args that get attached to each subprocess. Must be
-// called before ExecuteProcess
-func AppendArgToSubprocess(arg string) {
-  args = append(args, arg)
-}
-
 func ExecuteProcess(appHandle unsafe.Pointer) int {
-	os.Args = append(os.Args, args...)
 	Logger.Println("ExecuteProcess, args=", os.Args)
 
 	_InitializeGlobalCStructures()
@@ -165,8 +157,10 @@ func Initialize(settings Settings) int {
 
 	globalLifespanHandler = &LifeSpanHandler{make(chan *Browser)}
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
-	Logger.Println("Waiting for onContextInitialized")
-	WaitForContextInitialized()
+	// Sleep for 500ms to let cef _really_ initialize
+	// https://code.google.com/p/cefpython/issues/detail?id=131#c2
+	time.Sleep(500 * time.Millisecond)
+
 	return int(ret)
 }
 
@@ -184,11 +178,6 @@ func Shutdown() {
 	Logger.Println("Shutdown")
 	C.cef_shutdown()
 	// OFF: cef_sandbox_info_destroy(_SandboxInfo)
-}
-
-func WaitForContextInitialized() {
-	Logger.Println("WaitForContextInitialized")
-	// <-contextInitialized
 }
 
 func OnUIThread() bool {

@@ -1,2 +1,7 @@
 pkg/
 .DS_Store
+test.log
+debug.log
+*webcache*
+cef2go
+main_linux
