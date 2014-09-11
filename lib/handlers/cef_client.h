@@ -35,13 +35,28 @@ struct _cef_dialog_handler_t* CEF_CALLBACK get_dialog_handler(
     return NULL;
 }
 
+int CEF_CALLBACK cef_display_handler_t_on_console_message(
+      struct _cef_display_handler_t* self,
+      struct _cef_browser_t* browser, const cef_string_t* message,
+      const cef_string_t* source, int line) {
+    DEBUG_CALLBACK("client->DisplayHandler->on_console_message\n");
+    go_OnConsoleMessage(browser, message, source, line);
+    return 1;
+}
+
 ///
 // Return the handler for browser display state events.
 ///
 struct _cef_display_handler_t* CEF_CALLBACK get_display_handler(
         struct _cef_client_t* self) {
     DEBUG_CALLBACK("get_display_handler\n");
-    return NULL;
+    cef_display_handler_t* displayHandler = (cef_display_handler_t*)calloc(1, sizeof(cef_display_handler_t));
+    DEBUG_CALLBACK("client->initialize_display_handler\n");
+    displayHandler->base.size = sizeof(cef_display_handler_t);
+    initialize_cef_base((cef_base_t*) displayHandler);
+    // callbacks
+    displayHandler->on_console_message = cef_display_handler_t_on_console_message;
+    return displayHandler;
 }
 
 ///

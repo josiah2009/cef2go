@@ -44,13 +44,10 @@ cef_string_utf8_t * cefStringToUtf8(cef_string_t * source) {
     return output;
 }
 
-cef_string_utf8_t * GetURL(cef_browser_t* browser)
+cef_string_t * GetURL(cef_browser_t* browser)
 {
     cef_frame_t * frame = browser->get_main_frame(browser);
-    cef_string_t * str = frame->get_url(frame);
-    cef_string_utf8_t * out = cefStringToUtf8(str);
-    // cef_string_userfree_free(str);
-    return out;
+    return frame->get_url(frame);
 }
 
 */
@@ -99,9 +96,7 @@ func (b *Browser) GetWindowHandle() C.cef_window_handle_t {
 }
 
 func (b *Browser) GetURL() string {
-	cs := C.GetURL(b.cbrowser)
-	defer C.cef_string_userfree_utf8_free(cs)
-	return C.GoString(cs.str)
+	return CEFToGoString(C.GetURL(b.cbrowser))
 }
 
 type BrowserSettings struct {

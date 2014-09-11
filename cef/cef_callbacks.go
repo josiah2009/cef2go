@@ -19,3 +19,8 @@ func go_OnAfterCreated(self *C.struct__cef_life_span_handler_t, browser *C.cef_b
 func go_Log(str *C.char) {
 	log.Debug(C.GoString(str))
 }
+
+//export go_OnConsoleMessage
+func go_OnConsoleMessage(browser *C.cef_browser_t, message *C.cef_string_t, source *C.cef_string_t, line int) {
+	consoleHandler(CEFToGoString(message), CEFToGoString(source), line)
+}

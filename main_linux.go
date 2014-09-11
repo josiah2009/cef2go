@@ -6,7 +6,6 @@ package main
 
 import "C"
 import (
-	"fmt"
 	"github.com/op/go-logging"
 	"github.com/paperlesspost/cef2go/cef"
 	"github.com/paperlesspost/cef2go/gtk"
@@ -15,7 +14,7 @@ import (
 
 func main() {
 	cwd, _ := os.Getwd()
-	logging.SetLevel(logging.INFO, "cef")
+	logging.SetLevel(logging.DEBUG, "cef")
 	var releasePath = os.Getenv("RELEASE_PATH")
 	if releasePath == "" {
 		releasePath = cwd

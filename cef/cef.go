@@ -27,7 +27,7 @@ CEF capi fixes
 #include "include/capi/cef_app_capi.h"
 #include "handlers/cef_app.h"
 #include "handlers/cef_client.h"
-
+#include "cef_string_conversion.h"
 */
 import "C"
 import (
@@ -43,7 +43,13 @@ var _MainArgs *C.struct__cef_main_args_t
 var _AppHandler *C.cef_app_t               // requires reference counting
 var _ClientHandler *C.struct__cef_client_t // requires reference counting
 
-var contextInitialized chan int
+// Set up the js console handlers
+type ConsoleHandlerFunc func(message, source string, line int)
+
+var DefaultConsoleHandler ConsoleHandlerFunc = ConsoleHandlerFunc(func(message, source string, line int) {
+	log.Info("[console:%s %d] %s", source, line, message)
+})
+var consoleHandler ConsoleHandlerFunc = DefaultConsoleHandler
 
 // Sandbox is disabled. Including the "cef_sandbox.lib"
 // library results in lots of GCC warnings/errors. It is
@@ -81,6 +87,12 @@ func CEFString(original string) (final *C.cef_string_t) {
 	defer C.free(unsafe.Pointer(charString))
 	C.cef_string_from_utf8(charString, C.strlen(charString), final)
 	return final
+}
+
+func CEFToGoString(source *C.cef_string_t) string {
+	utf8string := C.cefSourceToString(source)
+	defer C.cef_string_userfree_utf8_free(utf8string)
+	return C.GoString(utf8string.str)
 }
 
 func _InitializeGlobalCStructures() {
@@ -138,7 +150,6 @@ func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
 }
 
 func Initialize(settings Settings) int {
-	contextInitialized = make(chan int)
 	log.Debug("Initialize")
 
 	if _MainArgs == nil {
@@ -173,6 +184,10 @@ func QuitMessageLoop() {
 func Shutdown() {
 	log.Debug("Shutdown")
 	C.cef_shutdown()
+}
+
+func SetConsoleHandler(handler ConsoleHandlerFunc) {
+	consoleHandler = handler
 }
 
 func OnUIThread() bool {
