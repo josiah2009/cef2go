@@ -35,6 +35,14 @@ cef_window_handle_t GetWindowHandle(cef_browser_t* browser)
     return host->get_window_handle(host);
 }
 
+// Force close the browser
+void CloseBrowser(cef_browser_t* browser)
+{
+    cef_browser_host_t * host = browser->get_host(browser);
+    host->close_browser(host, 1);
+
+}
+
 cef_string_utf8_t * cefStringToUtf8(cef_string_t * source) {
     cef_string_utf8_t * output = cef_string_userfree_utf8_alloc();
     if (source == 0) {
@@ -97,6 +105,10 @@ func (b *Browser) GetWindowHandle() C.cef_window_handle_t {
 
 func (b *Browser) GetURL() string {
 	return CEFToGoString(C.GetURL(b.cbrowser))
+}
+
+func (b *Browser) Close() {
+	C.CloseBrowser(b.cbrowser)
 }
 
 type BrowserSettings struct {
