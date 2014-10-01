@@ -65,13 +65,17 @@ import (
 	"unsafe"
 )
 
-func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string) (browser *Browser) {
+func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string, offscreenRendering bool) (browser *Browser) {
 	log.Debug("CreateBrowser, url=%s", url)
 
 	// Initialize cef_window_info_t structure.
 	var windowInfo *C.cef_window_info_t
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	FillWindowInfo(windowInfo, hwnd)
+	if offscreenRendering {
+		windowInfo.window_rendering_disabled = 1
+		windowInfo.transparent_painting = 1
+	}
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
 	b, err := globalLifespanHandler.RegisterAndWaitForBrowser(url)
 	if err != nil {

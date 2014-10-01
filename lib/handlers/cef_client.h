@@ -5,6 +5,7 @@
 #include "handlers/cef_base.h"
 #include "include/capi/cef_client_capi.h"
 #include "include/capi/cef_life_span_handler_capi.h"
+#include "include/capi/cef_render_handler_capi.h"
 
 // ----------------------------------------------------------------------------
 // struct _cef_client_t
@@ -144,13 +145,48 @@ struct _cef_load_handler_t* CEF_CALLBACK get_load_handler(
     return NULL;
 }
 
+int CEF_CALLBACK cef_render_handler_t_get_view_rect(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, cef_rect_t* rect) {
+      DEBUG_CALLBACK("render_handler->get_view_rect");
+      rect->x = 0;
+      rect->y = 0;
+      rect->width = 700;
+      rect->height = 700;
+      return 1;
+}
+
+int CEF_CALLBACK cef_render_handler_t_get_root_screen_rect(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, cef_rect_t* rect) {
+      DEBUG_CALLBACK("render_handler->get_root_srceen_rect");
+      rect->x = 0;
+      rect->y = 0;
+      rect->width = 700;
+      rect->height = 700;
+      return 1;
+}
+
+void CEF_CALLBACK cef_render_handler_t_on_paint(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, cef_paint_element_type_t type,
+      size_t dirtyRectsCount, cef_rect_t const* dirtyRects, const void* buffer,
+      int width, int height) {
+      DEBUG_CALLBACK("render_handler->on_paint");
+      go_RenderHandlerOnPaint(browser->get_identifier(browser), buffer, width, height);
+}
+
 ///
 // Return the handler for off-screen rendering events.
 ///
 struct _cef_render_handler_t* CEF_CALLBACK get_render_handler(
         struct _cef_client_t* self) {
     DEBUG_CALLBACK("get_render_handler\n");
-    return NULL;
+    cef_render_handler_t* renderHandler = (cef_render_handler_t*)calloc(1, sizeof(cef_render_handler_t));
+    renderHandler->base.size = sizeof(cef_render_handler_t);
+    initialize_cef_base((cef_base_t*) renderHandler);
+    // callbacks
+    renderHandler->get_view_rect = cef_render_handler_t_get_view_rect;
+    renderHandler->get_root_screen_rect = cef_render_handler_t_get_root_screen_rect;
+    renderHandler->on_paint = cef_render_handler_t_on_paint;
+    return renderHandler;
 }
 
 ///
