@@ -4,6 +4,7 @@
 
 #include "handlers/cef_base.h"
 #include "include/capi/cef_client_capi.h"
+#include "include/capi/cef_browser_capi.h"
 #include "include/capi/cef_life_span_handler_capi.h"
 #include "include/capi/cef_render_handler_capi.h"
 
@@ -145,24 +146,40 @@ struct _cef_load_handler_t* CEF_CALLBACK get_load_handler(
     return NULL;
 }
 
+int CEF_CALLBACK cef_render_handler_t_get_root_screen_rect(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, cef_rect_t* rect) {
+      DEBUG_CALLBACK("render_handler->get_root_screen_rect");
+      return go_RenderHandlerGetRootScreenRect(browser->get_identifier(browser), rect);
+}
+
 int CEF_CALLBACK cef_render_handler_t_get_view_rect(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, cef_rect_t* rect) {
       DEBUG_CALLBACK("render_handler->get_view_rect");
-      rect->x = 0;
-      rect->y = 0;
-      rect->width = 700;
-      rect->height = 700;
-      return 1;
+      return go_RenderHandlerGetViewRect(browser->get_identifier(browser), rect);
 }
 
-int CEF_CALLBACK cef_render_handler_t_get_root_screen_rect(struct _cef_render_handler_t* self,
-      struct _cef_browser_t* browser, cef_rect_t* rect) {
-      DEBUG_CALLBACK("render_handler->get_root_srceen_rect");
-      rect->x = 0;
-      rect->y = 0;
-      rect->width = 700;
-      rect->height = 700;
-      return 1;
+int CEF_CALLBACK cef_render_handler_t_get_screen_point(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, int viewX, int viewY, int* screenX, int* screenY) {
+      DEBUG_CALLBACK("render_handler->get_screen_point");
+      return go_RenderHandlerGetScreenPoint(browser->get_identifier(browser), viewX, viewY, screenX, screenY);
+}
+
+int CEF_CALLBACK cef_render_handler_t_get_screen_info(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, struct _cef_screen_info_t* info) {
+      DEBUG_CALLBACK("render_handler->get_screen_info");
+      return go_RenderHandlerGetScreenInfo(browser->get_identifier(browser), info);
+}
+
+void CEF_CALLBACK cef_render_handler_t_on_popup_show(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, int show) {
+      DEBUG_CALLBACK("render_handler->on_popup_show");
+      go_RenderHandlerOnPopupShow(browser->get_identifier(browser), show);
+}
+
+void CEF_CALLBACK cef_render_handler_t_on_popup_size(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, const cef_rect_t* rect) {
+      DEBUG_CALLBACK("render_handler->on_popup_size");
+      go_RenderHandlerOnPopupSize(browser->get_identifier(browser), rect);
 }
 
 void CEF_CALLBACK cef_render_handler_t_on_paint(struct _cef_render_handler_t* self,
@@ -170,7 +187,19 @@ void CEF_CALLBACK cef_render_handler_t_on_paint(struct _cef_render_handler_t* se
       size_t dirtyRectsCount, cef_rect_t const* dirtyRects, const void* buffer,
       int width, int height) {
       DEBUG_CALLBACK("render_handler->on_paint");
-      go_RenderHandlerOnPaint(browser->get_identifier(browser), buffer, width, height);
+      go_RenderHandlerOnPaint(browser->get_identifier(browser), type, dirtyRectsCount, dirtyRects, buffer, width, height);
+}
+
+void CEF_CALLBACK cef_render_handler_t_on_cursor_change(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser, cef_cursor_handle_t cursor) {
+      DEBUG_CALLBACK("render_handler->on_cursor_change");
+      go_RenderHandlerOnCursorChange(browser->get_identifier(browser), cursor);
+}
+
+void CEF_CALLBACK cef_render_handler_t_on_scroll_offset_changed(struct _cef_render_handler_t* self,
+      struct _cef_browser_t* browser) {
+      DEBUG_CALLBACK("render_handler->on_scroll_offset_changed");
+      go_RenderHandlerOnScrollOffsetChanged(browser->get_identifier(browser));
 }
 
 ///
@@ -183,9 +212,15 @@ struct _cef_render_handler_t* CEF_CALLBACK get_render_handler(
     renderHandler->base.size = sizeof(cef_render_handler_t);
     initialize_cef_base((cef_base_t*) renderHandler);
     // callbacks
-    renderHandler->get_view_rect = cef_render_handler_t_get_view_rect;
     renderHandler->get_root_screen_rect = cef_render_handler_t_get_root_screen_rect;
+    renderHandler->get_view_rect = cef_render_handler_t_get_view_rect;
+    renderHandler->get_screen_point = cef_render_handler_t_get_screen_point;
+    renderHandler->get_screen_info = cef_render_handler_t_get_screen_info;
+    renderHandler->on_popup_show = cef_render_handler_t_on_popup_show;
+    renderHandler->on_popup_size = cef_render_handler_t_on_popup_size;
     renderHandler->on_paint = cef_render_handler_t_on_paint;
+    renderHandler->on_cursor_change = cef_render_handler_t_on_cursor_change;
+    renderHandler->on_scroll_offset_changed = cef_render_handler_t_on_scroll_offset_changed;
     return renderHandler;
 }
 

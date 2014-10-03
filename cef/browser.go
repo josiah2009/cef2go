@@ -88,19 +88,20 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 		log.Error("ERROR %v", err)
 		panic("Failed to create a browser")
 	}
-        b.RenderHandler = &DefaultRenderHandler{b}
+	b.RenderHandler = &DefaultRenderHandler{b}
 	browsers[b.Id] = b
 	return b
 }
 
 type Browser struct {
-	Id       int
-	cbrowser *C.cef_browser_t
-        RenderHandler RenderHandler
+	Id            int
+	cbrowser      *C.cef_browser_t
+	RenderHandler RenderHandler
 }
 
 func BrowserById(id int) (browser *Browser, ok bool) {
-	return browsers[id]
+	browser, ok = browsers[id]
+	return
 }
 
 func (b *Browser) ExecuteJavaScript(code, url string, startLine int) {

@@ -1,5 +1,11 @@
 package cef
 
+/*
+#include <stdlib.h>
+#include "string.h"
+#include "include/capi/cef_app_capi.h"
+#include "include/capi/cef_client_capi.h"
+*/
 import "C"
 
 import (
@@ -10,7 +16,7 @@ type RenderHandler interface {
 	GetRootScreenRect(*C.cef_rect_t) int
 	GetViewRect(*C.cef_rect_t) int
 	GetScreenPoint(int, int, *int, *int) int
-	GetScreenInfo(*C.cef_screen_info) int
+	GetScreenInfo(*C.cef_screen_info_t) int
 	OnPopupShow(int)
 	OnPopupSize(*C.cef_rect_t)
 	OnPaint(C.cef_paint_element_type_t, C.size_t, unsafe.Pointer, unsafe.Pointer, int, int)
@@ -43,7 +49,7 @@ func go_RenderHandlerGetScreenPoint(browserId, x, y int, screenX *int, screenY *
 }
 
 //export go_RenderHandlerGetScreenInfo
-func go_RenderHandlerGetScreenInfo(browserId int, info *C.cef_screen_info) int {
+func go_RenderHandlerGetScreenInfo(browserId int, info *C.cef_screen_info_t) int {
 	if b, ok := BrowserById(browserId); ok {
 		return b.RenderHandler.GetScreenInfo(info)
 	}
@@ -53,7 +59,7 @@ func go_RenderHandlerGetScreenInfo(browserId int, info *C.cef_screen_info) int {
 //export go_RenderHandlerOnPopupShow
 func go_RenderHandlerOnPopupShow(browserId int, show int) {
 	if b, ok := BrowserById(browserId); ok {
-		b.RenderHandler.OnPopupShow(int)
+		b.RenderHandler.OnPopupShow(show)
 	}
 }
 
@@ -88,7 +94,7 @@ func go_RenderHandlerOnPaint(browserId int, paintType C.cef_paint_element_type_t
 }
 
 //export go_RenderHandlerOnCursorChange
-func go_RenderHandlerOnPopupSize(browserId int, cursor C.cef_cursor_handle_t) {
+func go_RenderHandlerOnCursorChange(browserId int, cursor C.cef_cursor_handle_t) {
 	if b, ok := BrowserById(browserId); ok {
 		b.RenderHandler.OnCursorChange(cursor)
 	}
@@ -117,7 +123,7 @@ func (d *DefaultRenderHandler) GetScreenPoint(x, y int, screenX, screenY *int) i
 	return 0
 }
 
-func (d *DefaultRenderHandler) GetScreenInfo(info *C.screen_info_t) int {
+func (d *DefaultRenderHandler) GetScreenInfo(info *C.cef_screen_info_t) int {
 	return 0
 }
 

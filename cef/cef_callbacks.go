@@ -8,19 +8,10 @@ package cef
 */
 import "C"
 
-import (
-	"fmt"
-	"github.com/errnoh/utils/bgra"
-	"image"
-	"image/png"
-	"os"
-	"unsafe"
-)
-
 //export go_OnAfterCreated
 func go_OnAfterCreated(self *C.struct__cef_life_span_handler_t, browserId int, browser *C.cef_browser_t) {
 	if globalLifespanHandler != nil {
-		globalLifespanHandler.OnAfterCreated(&Browser{browserId, browser})
+		globalLifespanHandler.OnAfterCreated(&Browser{browserId, browser, nil})
 	}
 }
 
@@ -33,4 +24,3 @@ func go_Log(str *C.char) {
 func go_OnConsoleMessage(browser *C.cef_browser_t, message *C.cef_string_t, source *C.cef_string_t, line int) {
 	consoleHandler(CEFToGoString(message), CEFToGoString(source), line)
 }
-
