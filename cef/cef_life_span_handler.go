@@ -20,7 +20,7 @@ type LifeSpanHandler struct {
 	browser chan *Browser
 }
 
-func (l *LifeSpanHandler) RegisterAndWaitForBrowser(url string) (browser *Browser, err error) {
+func (l *LifeSpanHandler) RegisterAndWaitForBrowser() (browser *Browser, err error) {
 	select {
 	case b := <-l.browser:
 		return b, nil

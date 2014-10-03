@@ -118,7 +118,7 @@ void CEF_CALLBACK cef_life_span_handler_t_on_after_created(
         struct _cef_life_span_handler_t* self,
         struct _cef_browser_t* browser) {
     DEBUG_CALLBACK("client->LifeSpanHandler->on_after_created\n");
-    go_OnAfterCreated(self, browser);
+    go_OnAfterCreated(self, browser->get_identifier(browser), browser);
 }
 
 ///

@@ -65,6 +65,12 @@ import (
 	"unsafe"
 )
 
+var browsers map[int]*Browser
+
+func init() {
+	browsers = make(map[int]*Browser)
+}
+
 func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string, offscreenRendering bool) (browser *Browser) {
 	log.Debug("CreateBrowser, url=%s", url)
 
@@ -77,16 +83,24 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 		windowInfo.transparent_painting = 1
 	}
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
-	b, err := globalLifespanHandler.RegisterAndWaitForBrowser(url)
+	b, err := globalLifespanHandler.RegisterAndWaitForBrowser()
 	if err != nil {
 		log.Error("ERROR %v", err)
 		panic("Failed to create a browser")
 	}
+        b.RenderHandler = &DefaultRenderHandler{b}
+	browsers[b.Id] = b
 	return b
 }
 
 type Browser struct {
+	Id       int
 	cbrowser *C.cef_browser_t
+        RenderHandler RenderHandler
+}
+
+func BrowserById(id int) (browser *Browser, ok bool) {
+	return browsers[id]
 }
 
 func (b *Browser) ExecuteJavaScript(code, url string, startLine int) {
@@ -113,6 +127,7 @@ func (b *Browser) GetURL() string {
 
 func (b *Browser) Close() {
 	C.CloseBrowser(b.cbrowser)
+	delete(browsers, b.Id)
 }
 
 type BrowserSettings struct {
