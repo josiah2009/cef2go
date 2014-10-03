@@ -5,6 +5,7 @@ package cef
 #include "string.h"
 #include "include/capi/cef_client_capi.h"
 #include "include/capi/cef_browser_capi.h"
+#include "include/capi/cef_v8_capi.h"
 
 void ExecuteJavaScript(cef_browser_t* browser, const char* code, const char* script_url, int start_line)
 {
@@ -57,6 +58,7 @@ cef_string_t * GetURL(cef_browser_t* browser)
     cef_frame_t * frame = browser->get_main_frame(browser);
     return frame->get_url(frame);
 }
+
 
 */
 import "C"

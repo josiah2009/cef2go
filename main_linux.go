@@ -9,6 +9,7 @@ import (
 	"github.com/op/go-logging"
 	"github.com/paperlesspost/cef2go/cef"
 	"github.com/paperlesspost/cef2go/gtk"
+        "fmt"
 	"os"
 )
 
@@ -19,6 +20,14 @@ func main() {
 	if releasePath == "" {
 		releasePath = cwd
 	}
+        // you need to register to the callback before we fork processes
+	cef.RegisterV8Callback("sup", cef.V8Callback(func(args []cef.V8Value) {
+                arg0 := cef.V8ValueToInt32(args[0])
+                arg1 := cef.V8ValueToInt32(args[1])
+                arg2 := cef.V8ValueToBool(args[2])
+                arg3 := cef.V8ValueToString(args[3])
+		fmt.Printf("Calling V8Callback args: %d %d %v %s\n", arg0, arg1, arg2, arg3)
+	}))
 	// CEF subprocesses.
 	cef.ExecuteProcess(nil)
 
@@ -42,7 +51,7 @@ func main() {
 	url := "file://" + cwd + "/Release/example.html"
 	go func() {
 		browser := cef.CreateBrowser(window, browserSettings, url, true)
-		browser.ExecuteJavaScript("console.log('we outchea'); cef2go.callback('sup', 1);", "sup.js", 1)
+		browser.ExecuteJavaScript("console.log('we outchea'); cef2go.callback('sup', 10, 10, true, 'something');", "sup.js", 1)
 	}()
 	// CEF loop and shutdown.
 	cef.RunMessageLoop()
