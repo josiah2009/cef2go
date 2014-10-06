@@ -1,4 +1,3 @@
-
 release_path = ENV['RELEASE_PATH']
 attempts     = (ARGV.shift || 100).to_i
 timeout      = (ARGV.shift || 6).to_i
@@ -15,7 +14,7 @@ def is_running?(bin, timeout)
     tries += 1
     alive = `pidof #{bin}`.strip.split(' ').count > 0
   end
-  alive 
+  alive
 end
 
 def kill(bin)
@@ -31,7 +30,7 @@ puts "Running #{bin} #{attempts} times"
 while i < attempts
   run(release_path, bin)
   if is_running?(bin, timeout)
-    successes += 1 
+    successes += 1
     print '.'
   else
     failures += 1

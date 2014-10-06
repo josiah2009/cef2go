@@ -70,13 +70,13 @@ func RegisterV8Callback(name string, callback V8Callback) {
 }
 
 func V8ValueToInt32(v V8Value) int32 {
-      return int32(C.v8ValueToInt32((*C.cef_v8value_t)(v)))
+	return int32(C.v8ValueToInt32((*C.cef_v8value_t)(v)))
 }
 
 func V8ValueToString(v V8Value) string {
-      return CEFToGoString(C.v8ValueToString((*C.cef_v8value_t)(v)))
+	return CEFToGoString(C.v8ValueToString((*C.cef_v8value_t)(v)))
 }
 
 func V8ValueToBool(v V8Value) bool {
-      return int(C.v8ValueToBool((*C.cef_v8value_t)(v))) == 1
+	return int(C.v8ValueToBool((*C.cef_v8value_t)(v))) == 1
 }
