@@ -24,9 +24,8 @@ CEF capi fixes
 #cgo pkg-config: --libs --cflags gtk+-2.0
 #include <stdlib.h>
 #include "string.h"
-#include "include/capi/cef_app_capi.h"
-#include "handlers/cef_app.h"
-#include "handlers/cef_client.h"
+#include "cef_app.h"
+#include "cef_client.h"
 #include "cef_helpers.h"
 */
 import "C"
