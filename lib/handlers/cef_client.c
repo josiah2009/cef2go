@@ -1,41 +1,9 @@
-// Copyright (c) 2014 The cefcapi authors. All rights reserved.
-// License: BSD 3-clause.
-// Website: https://github.com/CzarekTomczak/cefcapi
-
 #include "handlers/cef_base.h"
 #include "include/capi/cef_client_capi.h"
 #include "include/capi/cef_browser_capi.h"
 #include "include/capi/cef_life_span_handler_capi.h"
 #include "include/capi/cef_render_handler_capi.h"
 
-// ----------------------------------------------------------------------------
-// struct _cef_client_t
-// ----------------------------------------------------------------------------
-
-///
-// Implement this structure to provide handler implementations.
-///
-
-///
-// Return the handler for context menus. If no handler is provided the default
-// implementation will be used.
-///
-
-struct _cef_context_menu_handler_t* CEF_CALLBACK get_context_menu_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_context_menu_handler\n");
-    return NULL;
-}
-
-///
-// Return the handler for dialogs. If no handler is provided the default
-// implementation will be used.
-///
-struct _cef_dialog_handler_t* CEF_CALLBACK get_dialog_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_dialog_handler\n");
-    return NULL;
-}
 
 int CEF_CALLBACK cef_display_handler_t_on_console_message(
       struct _cef_display_handler_t* self,
@@ -58,62 +26,6 @@ struct _cef_display_handler_t* CEF_CALLBACK get_display_handler(
     return displayHandler;
 }
 
-///
-// Return the handler for download events. If no handler is returned downloads
-// will not be allowed.
-///
-struct _cef_download_handler_t* CEF_CALLBACK get_download_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_download_handler\n");
-    return NULL;
-}
-
-///
-// Return the handler for drag events.
-///
-struct _cef_drag_handler_t* CEF_CALLBACK get_drag_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_drag_handler\n");
-    return NULL;
-}
-
-///
-// Return the handler for focus events.
-///
-struct _cef_focus_handler_t* CEF_CALLBACK get_focus_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_focus_handler\n");
-    return NULL;
-}
-
-///
-// Return the handler for geolocation permissions requests. If no handler is
-// provided geolocation access will be denied by default.
-///
-struct _cef_geolocation_handler_t* CEF_CALLBACK get_geolocation_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_geolocation_handler\n");
-    return NULL;
-}
-
-///
-// Return the handler for JavaScript dialogs. If no handler is provided the
-// default implementation will be used.
-///
-struct _cef_jsdialog_handler_t* CEF_CALLBACK get_jsdialog_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_jsdialog_handler\n");
-    return NULL;
-}
-
-///
-// Return the handler for keyboard events.
-///
-struct _cef_keyboard_handler_t* CEF_CALLBACK get_keyboard_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_keyboard_handler\n");
-    return NULL;
-}
 
 void CEF_CALLBACK cef_life_span_handler_t_on_after_created(
         struct _cef_life_span_handler_t* self,
@@ -122,9 +34,6 @@ void CEF_CALLBACK cef_life_span_handler_t_on_after_created(
     go_OnAfterCreated(self, browser->get_identifier(browser), browser);
 }
 
-///
-// Return the handler for browser life span events.
-///
 struct _cef_life_span_handler_t* CEF_CALLBACK get_life_span_handler(
         struct _cef_client_t* self) {
     cef_life_span_handler_t* lifeHandler = (cef_life_span_handler_t*)calloc(1, sizeof(cef_life_span_handler_t));
@@ -135,15 +44,6 @@ struct _cef_life_span_handler_t* CEF_CALLBACK get_life_span_handler(
     lifeHandler->on_after_created = cef_life_span_handler_t_on_after_created;
     return lifeHandler;
     // return NULL;
-}
-
-///
-// Return the handler for browser load status events.
-///
-struct _cef_load_handler_t* CEF_CALLBACK get_load_handler(
-        struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_load_handler\n");
-    return NULL;
 }
 
 int CEF_CALLBACK cef_render_handler_t_get_root_screen_rect(struct _cef_render_handler_t* self,
