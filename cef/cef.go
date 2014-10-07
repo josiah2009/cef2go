@@ -27,7 +27,7 @@ CEF capi fixes
 #include "include/capi/cef_app_capi.h"
 #include "handlers/cef_app.h"
 #include "handlers/cef_client.h"
-#include "cef_string_conversion.h"
+#include "cef_helpers.h"
 */
 import "C"
 import (

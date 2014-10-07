@@ -5,7 +5,7 @@ package cef
 #include "string.h"
 #include "include/capi/cef_app_capi.h"
 #include "include/capi/cef_client_capi.h"
-#include "cef_string_conversion.h"
+#include "cef_helpers.h"
 */
 import "C"
 
@@ -39,9 +39,7 @@ func go_RenderProcessHandlerOnWebKitInitialized(handler *C.cef_v8handler_t) {
 
 //export go_V8HandlerExecute
 func go_V8HandlerExecute(name *C.cef_string_t, object *C.cef_v8value_t, argsCount C.size_t, args **C.cef_v8value_t, retval **C.cef_v8value_t, exception *C.cef_string_t) int {
-	fname := CEFToGoString(name)
 	argsN := int(argsCount)
-	log.Debug("JS EXECUTION: %s %d", fname, argsN)
 	if argsN < 1 {
 		return 0
 	}

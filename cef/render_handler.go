@@ -5,6 +5,7 @@ package cef
 #include "string.h"
 #include "include/capi/cef_app_capi.h"
 #include "include/capi/cef_client_capi.h"
+#include "cef_helpers.h"
 */
 import "C"
 
@@ -18,11 +19,7 @@ type CefPaintElementType C.cef_paint_element_type_t
 type CefCursorHandle C.cef_cursor_handle_t
 
 func (r *CefRect) SetDimensions(x, y, width, height int) {
-	rect := (*C.cef_rect_t)(r)
-	rect.x = (C.int)(x)
-	rect.y = (C.int)(y)
-	rect.width = (C.int)(width)
-	rect.height = (C.int)(height)
+	C.setCefRectDimensions((*C.cef_rect_t)(r), C.int(x), C.int(y), C.int(width), C.int(height))
 }
 
 type RenderHandler interface {
