@@ -61,6 +61,7 @@ var consoleHandler ConsoleHandlerFunc = DefaultConsoleHandler
 var _SandboxInfo unsafe.Pointer
 
 type Settings struct {
+	SingleProcess       int
 	CachePath           string
 	LogSeverity         int
 	LogFile             string
@@ -137,6 +138,7 @@ func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
 	// Initialize cef_settings_t structure.
 	cefSettings = (*C.struct__cef_settings_t)(C.calloc(1, C.sizeof_struct__cef_settings_t))
 	cefSettings.size = C.sizeof_struct__cef_settings_t
+	cefSettings.single_process = C.int(settings.SingleProcess)
 	cefSettings.cache_path = *CEFString(settings.CachePath)
 	cefSettings.log_severity = (C.cef_log_severity_t)(C.int(settings.LogSeverity))
 	cefSettings.log_file = *CEFString(settings.LogFile)
