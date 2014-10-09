@@ -33,37 +33,37 @@ void CEF_CALLBACK cef_life_span_handler_t_on_after_created(
 
 int CEF_CALLBACK cef_render_handler_t_get_root_screen_rect(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, cef_rect_t* rect) {
-      DEBUG_CALLBACK("render_handler->get_root_screen_rect");
+      //DEBUG_CALLBACK("render_handler->get_root_screen_rect");
       return go_RenderHandlerGetRootScreenRect(browser->get_identifier(browser), rect);
 }
 
 int CEF_CALLBACK cef_render_handler_t_get_view_rect(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, cef_rect_t* rect) {
-      DEBUG_CALLBACK("render_handler->get_view_rect");
+      //DEBUG_CALLBACK("render_handler->get_view_rect");
       return go_RenderHandlerGetViewRect(browser->get_identifier(browser), rect);
 }
 
 int CEF_CALLBACK cef_render_handler_t_get_screen_point(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, int viewX, int viewY, int* screenX, int* screenY) {
-      DEBUG_CALLBACK("render_handler->get_screen_point");
+      //DEBUG_CALLBACK("render_handler->get_screen_point");
       return go_RenderHandlerGetScreenPoint(browser->get_identifier(browser), viewX, viewY, screenX, screenY);
 }
 
 int CEF_CALLBACK cef_render_handler_t_get_screen_info(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, struct _cef_screen_info_t* info) {
-      DEBUG_CALLBACK("render_handler->get_screen_info");
+      //DEBUG_CALLBACK("render_handler->get_screen_info");
       return go_RenderHandlerGetScreenInfo(browser->get_identifier(browser), info);
 }
 
 void CEF_CALLBACK cef_render_handler_t_on_popup_show(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, int show) {
-      DEBUG_CALLBACK("render_handler->on_popup_show");
+      //DEBUG_CALLBACK("render_handler->on_popup_show");
       go_RenderHandlerOnPopupShow(browser->get_identifier(browser), show);
 }
 
 void CEF_CALLBACK cef_render_handler_t_on_popup_size(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, const cef_rect_t* rect) {
-      DEBUG_CALLBACK("render_handler->on_popup_size");
+      //DEBUG_CALLBACK("render_handler->on_popup_size");
       go_RenderHandlerOnPopupSize(browser->get_identifier(browser), rect);
 }
 
@@ -71,19 +71,19 @@ void CEF_CALLBACK cef_render_handler_t_on_paint(struct _cef_render_handler_t* se
       struct _cef_browser_t* browser, cef_paint_element_type_t type,
       size_t dirtyRectsCount, cef_rect_t const* dirtyRects, const void* buffer,
       int width, int height) {
-      DEBUG_CALLBACK("render_handler->on_paint");
+      //DEBUG_CALLBACK("render_handler->on_paint");
       go_RenderHandlerOnPaint(browser->get_identifier(browser), type, dirtyRectsCount, dirtyRects, buffer, width, height);
 }
 
 void CEF_CALLBACK cef_render_handler_t_on_cursor_change(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser, cef_cursor_handle_t cursor) {
-      DEBUG_CALLBACK("render_handler->on_cursor_change");
+      //DEBUG_CALLBACK("render_handler->on_cursor_change");
       go_RenderHandlerOnCursorChange(browser->get_identifier(browser), cursor);
 }
 
 void CEF_CALLBACK cef_render_handler_t_on_scroll_offset_changed(struct _cef_render_handler_t* self,
       struct _cef_browser_t* browser) {
-      DEBUG_CALLBACK("render_handler->on_scroll_offset_changed");
+      //DEBUG_CALLBACK("render_handler->on_scroll_offset_changed");
       go_RenderHandlerOnScrollOffsetChanged(browser->get_identifier(browser));
 }
 
@@ -127,19 +127,19 @@ void initialize_render_handler() {
 
 struct _cef_display_handler_t* CEF_CALLBACK get_display_handler(
         struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_display_handler");
+    //DEBUG_CALLBACK("get_display_handler");
     return go_client->display_handler;
 }
 
 struct _cef_life_span_handler_t* CEF_CALLBACK get_life_span_handler(
         struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_life_span_handler");
+    //DEBUG_CALLBACK("get_life_span_handler");
     return go_client->life_span_handler;
 }
 
 struct _cef_render_handler_t* CEF_CALLBACK get_render_handler(
         struct _cef_client_t* self) {
-    DEBUG_CALLBACK("get_render_handler");
+    //DEBUG_CALLBACK("get_render_handler");
     return go_client->render_handler;
 }
 

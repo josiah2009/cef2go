@@ -19,7 +19,7 @@ type CefPaintElementType C.cef_paint_element_type_t
 type CefCursorHandle C.cef_cursor_handle_t
 
 func (r *CefRect) SetDimensions(x, y, width, height int) {
-	C.setCefRectDimensions((*C.cef_rect_t)(r), C.int(x), C.int(y), C.int(width), C.int(height))
+	C.setCefRectDimensions((*C.cef_rect_t)(r), (C.int)(x), (C.int)(y), (C.int)(width), (C.int)(height))
 }
 
 type RenderHandler interface {

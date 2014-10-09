@@ -30,6 +30,12 @@ void LoadURL(cef_browser_t* browser, const char* url)
     cef_string_userfree_utf16_free(urlCef);
 }
 
+void BrowserWasResized(cef_browser_t* browser)
+{
+    cef_browser_host_t * host = browser->get_host(browser);
+    host->was_resized(host);
+}
+
 cef_window_handle_t GetWindowHandle(cef_browser_t* browser)
 {
     cef_browser_host_t * host = browser->get_host(browser);
@@ -118,6 +124,10 @@ func (b *Browser) LoadURL(url string) {
 	urlCString := C.CString(url)
 	defer C.free(unsafe.Pointer(urlCString))
 	C.LoadURL(b.cbrowser, urlCString)
+}
+
+func (b *Browser) TriggerPaint() {
+        C.BrowserWasResized(b.cbrowser)
 }
 
 func (b *Browser) GetWindowHandle() C.cef_window_handle_t {

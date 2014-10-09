@@ -74,7 +74,7 @@ int CEF_CALLBACK cef_v8handler_execute(struct _cef_v8handler_t* self,
       const cef_string_t* name, struct _cef_v8value_t* object,
       size_t argumentsCount, struct _cef_v8value_t* const* arguments,
       struct _cef_v8value_t** retval, cef_string_t* exception) {
-    DEBUG_CALLBACK("v8handler->execute\n");
+    //DEBUG_CALLBACK("v8handler->execute\n");
     return go_V8HandlerExecute(name, object, argumentsCount, arguments, retval, exception);
 }
 
