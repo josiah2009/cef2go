@@ -16,19 +16,8 @@ import (
 	"unsafe"
 )
 
-// a niave memory management.
-// allows us to keep track of allocated resources, and their counts
-// furthermore, the deconstructor lets us free any go resources once
-// their C versions have been released
-// General info about the ref count in CEF:
-//      http://code.google.com/p/chromiumembedded/wiki/UsingTheCAPI
-type MemoryManagedBridge struct {
-	Count         int
-	Deconstructor func(it unsafe.Pointer)
-}
-
 var (
-	memoryBridge = make(map[unsafe.Pointer]MemoryManagedBridge)
+	memoryBridge = make(map[unsafe.Pointer]int)
 	refCountLock sync.Mutex
 )
 
@@ -36,13 +25,13 @@ var (
 func go_AddRef(it unsafe.Pointer) int {
 	refCountLock.Lock()
 	defer refCountLock.Unlock()
-
-	if m, ok := memoryBridge[it]; ok {
-		m.Count++
-		memoryBridge[it] = m
-		return m.Count
+	m, ok := memoryBridge[it]
+	if !ok {
+		m = 0
 	}
-	return 1
+	m++
+	memoryBridge[it] = m
+	return m
 }
 
 //export go_Release
@@ -51,17 +40,13 @@ func go_Release(it unsafe.Pointer) int {
 	defer refCountLock.Unlock()
 
 	if m, ok := memoryBridge[it]; ok {
-		m.Count--
-		if m.Count == 0 {
-			if m.Deconstructor != nil {
-				m.Deconstructor(it)
-			}
-			// C.free(it)
+		m--
+		memoryBridge[it] = m
+		if m == 0 {
+			C.free(it)
 			delete(memoryBridge, it)
-		} else {
-			memoryBridge[it] = m
 		}
-		return m.Count
+		return m
 	}
 	return 1
 }
@@ -72,32 +57,7 @@ func go_GetRefCount(it unsafe.Pointer) int {
 	defer refCountLock.Unlock()
 
 	if m, ok := memoryBridge[it]; ok {
-		return m.Count
+		return m
 	}
 	return 1
-}
-
-//export go_CreateRef
-func go_CreateRef(it unsafe.Pointer) {
-	refCountLock.Lock()
-	defer refCountLock.Unlock()
-
-	if _, ok := memoryBridge[it]; !ok {
-		var m MemoryManagedBridge
-		m.Deconstructor = nil
-		memoryBridge[it] = m
-		return
-	}
-}
-
-func RegisterDestructor(it unsafe.Pointer, decon func(it unsafe.Pointer)) bool {
-	refCountLock.Lock()
-	defer refCountLock.Unlock()
-
-	if m, ok := memoryBridge[it]; ok {
-		m.Deconstructor = decon
-		memoryBridge[it] = m
-		return true
-	}
-	return false
 }

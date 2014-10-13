@@ -127,7 +127,7 @@ func (b *Browser) LoadURL(url string) {
 }
 
 func (b *Browser) TriggerPaint() {
-        C.BrowserWasResized(b.cbrowser)
+	C.BrowserWasResized(b.cbrowser)
 }
 
 func (b *Browser) GetWindowHandle() C.cef_window_handle_t {

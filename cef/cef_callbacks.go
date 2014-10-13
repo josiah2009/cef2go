@@ -8,6 +8,10 @@ package cef
 */
 import "C"
 
+import (
+	"unsafe"
+)
+
 //export go_OnAfterCreated
 func go_OnAfterCreated(self *C.struct__cef_life_span_handler_t, browserId int, browser *C.cef_browser_t) {
 	if globalLifespanHandler != nil {
@@ -18,6 +22,11 @@ func go_OnAfterCreated(self *C.struct__cef_life_span_handler_t, browserId int, b
 //export go_Log
 func go_Log(str *C.char) {
 	log.Debug(C.GoString(str))
+}
+
+//export go_LogPointer
+func go_LogPointer(str *C.char, p unsafe.Pointer) {
+	log.Debug(C.GoString(str)+" %p", p)
 }
 
 //export go_OnConsoleMessage

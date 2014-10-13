@@ -122,7 +122,7 @@ func ExecuteProcess(appHandle unsafe.Pointer) int {
 	if exitCode >= 0 {
 		os.Exit(int(exitCode))
 	}
-	log.Debug("Finished ExecuteProcess, args=", os.Args, os.Getpid(), exitCode)
+	log.Debug("Finished ExecuteProcess, args=%v %d %d", os.Args, os.Getpid(), exitCode)
 	return int(exitCode)
 }
 
@@ -164,6 +164,7 @@ func Initialize(settings Settings) int {
 	}
 
 	globalLifespanHandler = &LifeSpanHandler{make(chan *Browser)}
+	go_AddRef(unsafe.Pointer(_AppHandler))
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	// Sleep for 1500ms to let cef _really_ initialize
 	// https://code.google.com/p/cefpython/issues/detail?id=131#c2

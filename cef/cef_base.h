@@ -8,5 +8,6 @@
 // Print only the first execution of the callback,
 // ignore the subsequent.
 #define DEBUG_CALLBACK(x) { go_Log(x); }
+#define DEBUG_POINTER(x, p) { go_LogPointer(x, p); }
 
 extern void initialize_cef_base(cef_base_t* base);
