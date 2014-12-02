@@ -168,7 +168,7 @@ func Initialize(settings Settings) int {
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
 	// Sleep for 1500ms to let cef _really_ initialize
 	// https://code.google.com/p/cefpython/issues/detail?id=131#c2
-	time.Sleep(1500 * time.Millisecond)
+	time.Sleep(2500 * time.Millisecond)
 
 	return int(ret)
 }
