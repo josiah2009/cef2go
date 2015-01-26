@@ -90,15 +90,19 @@ func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url st
 		windowInfo.window_rendering_disabled = 1
 		windowInfo.transparent_painting = 1
 	}
-	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
-	b, err := globalLifespanHandler.RegisterAndWaitForBrowser()
-	if err != nil {
-		log.Error("ERROR %v", err)
-		panic("Failed to create a browser")
+	for tries := 0; tries < 5; tries++ {
+		browser_ret := C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
+		log.Debug("Browser return %v", browser_ret)
+		b, err := globalLifespanHandler.RegisterAndWaitForBrowser()
+		if err == nil {
+			b.RenderHandler = &DefaultRenderHandler{b}
+			browsers[b.Id] = b
+			return b
+		} else {
+			log.Error("ERROR %v", err)
+		}
 	}
-	b.RenderHandler = &DefaultRenderHandler{b}
-	browsers[b.Id] = b
-	return b
+	panic("Failed to create a browser")
 }
 
 type Browser struct {

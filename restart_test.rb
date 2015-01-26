@@ -22,7 +22,7 @@ def kill(bin)
 end
 
 def run(release_path, bin)
-  `RELEASE_PATH=#{File.expand_path(release_path)} ./#{bin} >> test.log 2>&1 &`
+  `RELEASE_PATH=#{File.expand_path(release_path)} ./#{bin} --disable-gpu --disable-gpu-sandbox >> test.log 2>&1 &`
 end
 
 puts "Running #{bin} #{attempts} times"

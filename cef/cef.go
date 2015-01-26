@@ -166,16 +166,22 @@ func Initialize(settings Settings) int {
 	globalLifespanHandler = &LifeSpanHandler{make(chan *Browser)}
 	go_AddRef(unsafe.Pointer(_AppHandler))
 	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
+	start := time.Now()
+	log.Debug("Sleeping")
 	// Sleep for 1500ms to let cef _really_ initialize
 	// https://code.google.com/p/cefpython/issues/detail?id=131#c2
-	time.Sleep(2500 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
+	log.Debug("Sleeping finished %d", time.Since(start)/time.Millisecond)
 
 	return int(ret)
 }
 
 func RunMessageLoop() {
-	log.Debug("RunMessageLoop")
-	C.cef_run_message_loop()
+	for {
+		log.Debug("RunMessageLoop")
+		C.cef_run_message_loop()
+	        time.Sleep(1000 * time.Millisecond)
+	}
 }
 
 func QuitMessageLoop() {
