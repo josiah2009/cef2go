@@ -1,6 +1,7 @@
 package cef
 
 /*
+#cgo LDFLAGS: -lX11
 #include <X11/Xlib.h>
 int XErrorHandlerImpl(Display *display, XErrorEvent *event) {
   go_Log("X error received");
@@ -16,12 +17,13 @@ int XErrorHandlerImpl(Display *display, XErrorEvent *event) {
 int XIOErrorHandlerImpl(Display *display) {
   return 0;
 }
+void XlibRegisterHandlers() {
+    XSetErrorHandler(XErrorHandlerImpl);
+    XSetIOErrorHandler(XIOErrorHandlerImpl);
+}
 */
 import "C"
 
 func XlibRegisterHandlers() {
-    C.XSetErrorHandler(ErrorHandlerImpl);
-    C.XSetIOErrorHandler(C.XIOErrorHandlerImpl);
+	C.XlibRegisterHandlers()
 }
-
-

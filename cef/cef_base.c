@@ -4,12 +4,13 @@
 
 #include "include/capi/cef_base_capi.h"
 #include <stdio.h>
+#include <string.h>
 
 ///
 // Increment the reference count.
 ///
-int CEF_CALLBACK add_ref(cef_base_t* self) {
-    return go_AddRef((void *) self);
+void CEF_CALLBACK add_ref(cef_base_t* self) {
+    go_AddRef((void *) self);
 }
 
 ///
@@ -32,7 +33,7 @@ void initialize_cef_base(cef_base_t* base) {
     size_t size = base->size;
     if (size <= 0) {
         printf("FATAL: initialize_cef_base failed, size member not set\n");
-        exit(1);
+        return;
     }
     base->add_ref = add_ref;
     base->release = release;

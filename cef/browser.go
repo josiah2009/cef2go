@@ -79,16 +79,15 @@ func init() {
 	browsers = make(map[int]*Browser)
 }
 
-func CreateBrowser(hwnd unsafe.Pointer, browserSettings *BrowserSettings, url string, offscreenRendering bool) (browser *Browser) {
+func CreateBrowser(browserSettings *BrowserSettings, url string, offscreenRendering bool) (browser *Browser) {
 	log.Debug("CreateBrowser, url=%s", url)
 
 	// Initialize cef_window_info_t structure.
 	var windowInfo *C.cef_window_info_t
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
-	FillWindowInfo(windowInfo, hwnd)
 	if offscreenRendering {
-		windowInfo.window_rendering_disabled = 1
-		windowInfo.transparent_painting = 1
+		windowInfo.windowless_rendering_enabled = 1
+		windowInfo.transparent_painting_enabled = 1
 	}
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
 	b, err := globalLifespanHandler.RegisterAndWaitForBrowser()
@@ -169,14 +168,6 @@ type BrowserSettings struct {
 	// configurable using the "disable-webgl" command-line switch.
 	///
 	Webgl bool
-
-	///
-	// Controls whether content that depends on accelerated compositing can be
-	// used. Note that accelerated compositing requires hardware support and may
-	// not work on all systems even when enabled. Also configurable using the
-	// "disable-accelerated-compositing" command-line switch.
-	///
-	AcceleratedCompositing bool
 }
 
 func (b *BrowserSettings) ToCStruct() (cefBrowserSettings *C.struct__cef_browser_settings_t) {
@@ -188,6 +179,5 @@ func (b *BrowserSettings) ToCStruct() (cefBrowserSettings *C.struct__cef_browser
 	cefBrowserSettings.file_access_from_file_urls = cefStateFromBool(b.FileAccessFromFileUrls)
 	cefBrowserSettings.web_security = cefStateFromBool(b.WebSecurity)
 	cefBrowserSettings.webgl = cefStateFromBool(b.Webgl)
-	cefBrowserSettings.accelerated_compositing = cefStateFromBool(b.AcceleratedCompositing)
 	return cefBrowserSettings
 }

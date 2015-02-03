@@ -17,6 +17,8 @@ type CefRect C.cef_rect_t
 type CefScreenInfo C.cef_screen_info_t
 type CefPaintElementType C.cef_paint_element_type_t
 type CefCursorHandle C.cef_cursor_handle_t
+type CefCursorType C.cef_cursor_type_t
+type CefCursorInfo C.cef_cursor_info_t
 
 func (r *CefRect) SetDimensions(x, y, width, height int) {
 	C.setCefRectDimensions((*C.cef_rect_t)(r), (C.int)(x), (C.int)(y), (C.int)(width), (C.int)(height))
@@ -30,7 +32,7 @@ type RenderHandler interface {
 	OnPopupShow(int)
 	OnPopupSize(*CefRect)
 	OnPaint(CefPaintElementType, int, unsafe.Pointer, unsafe.Pointer, int, int)
-	OnCursorChange(CefCursorHandle)
+	OnCursorChange(CefCursorHandle, CefCursorType, CefCursorInfo)
 	OnScrollOffsetChanged()
 }
 
@@ -89,9 +91,9 @@ func go_RenderHandlerOnPaint(browserId int, paintType C.cef_paint_element_type_t
 }
 
 //export go_RenderHandlerOnCursorChange
-func go_RenderHandlerOnCursorChange(browserId int, cursor C.cef_cursor_handle_t) {
+func go_RenderHandlerOnCursorChange(browserId int, cursor C.cef_cursor_handle_t, ctype C.cef_cursor_type_t, custom_cursor_info C.cef_cursor_info_t) {
 	if b, ok := BrowserById(browserId); ok {
-		b.RenderHandler.OnCursorChange((CefCursorHandle)(cursor))
+		b.RenderHandler.OnCursorChange((CefCursorHandle)(cursor), (CefCursorType)(ctype), (CefCursorInfo)(custom_cursor_info))
 	}
 }
 
@@ -131,7 +133,7 @@ func (d *DefaultRenderHandler) OnPopupSize(size *CefRect) {
 func (d *DefaultRenderHandler) OnPaint(paintType CefPaintElementType, dirtyRectsCount int, dirtyRects unsafe.Pointer, buffer unsafe.Pointer, width, height int) {
 }
 
-func (d *DefaultRenderHandler) OnCursorChange(cursor CefCursorHandle) {
+func (d *DefaultRenderHandler) OnCursorChange(cursor CefCursorHandle, ctype CefCursorType, custom_cursor_info CefCursorInfo) {
 }
 
 func (d *DefaultRenderHandler) OnScrollOffsetChanged() {

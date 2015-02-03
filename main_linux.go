@@ -50,7 +50,7 @@ func main() {
 	browserSettings := &cef.BrowserSettings{}
 	url := "file://" + cwd + "/Release/example.html"
 	go func() {
-		browser := cef.CreateBrowser(window, browserSettings, url, true)
+		browser := cef.CreateBrowser(browserSettings, url, true)
 		browser.ExecuteJavaScript("console.log('we outchea'); cef2go.callback('sup', 10, 10, true, 'something');", "sup.js", 1)
 	}()
 	// CEF loop and shutdown.

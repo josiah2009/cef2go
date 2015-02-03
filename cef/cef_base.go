@@ -56,7 +56,7 @@ func go_HasOneRef(it unsafe.Pointer) int {
 	refCountLock.Lock()
 	defer refCountLock.Unlock()
 
-	if m, ok := memoryBridge[it]; ok {
+	if _, ok := memoryBridge[it]; ok {
 		return 1
 	}
 	return 0
