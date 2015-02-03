@@ -21,7 +21,6 @@ CEF capi fixes
 /*
 #cgo CFLAGS: -I./../lib
 #cgo LDFLAGS: -lcef
-#cgo pkg-config: --libs --cflags gtk+-2.0
 #include <stdlib.h>
 #include "string.h"
 #include "cef_app.h"

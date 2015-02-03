@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/op/go-logging"
 	"github.com/paperlesspost/cef2go/cef"
-	"github.com/paperlesspost/cef2go/gtk"
 	"os"
 )
 
@@ -42,9 +41,10 @@ func main() {
 	cef.Initialize(settings)
 
 	// Create GTK window.
-	gtk.Initialize()
-	window := gtk.CreateWindow("cef2go example", 1024, 768)
-	gtk.ConnectDestroySignal(window, OnDestroyWindow)
+	//gtk.Initialize()
+	// window := gtk.CreateWindow("cef2go example", 1024, 768)
+	// gtk.ConnectDestroySignal(window, OnDestroyWindow)
+        cef.XlibRegisterHandlers()
 
 	// Create browser.
 	browserSettings := &cef.BrowserSettings{}

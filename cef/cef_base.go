@@ -51,13 +51,13 @@ func go_Release(it unsafe.Pointer) int {
 	return 1
 }
 
-//export go_GetRefCount
-func go_GetRefCount(it unsafe.Pointer) int {
+//export go_HasOneRef
+func go_HasOneRef(it unsafe.Pointer) int {
 	refCountLock.Lock()
 	defer refCountLock.Unlock()
 
 	if m, ok := memoryBridge[it]; ok {
-		return m
+		return 1
 	}
-	return 1
+	return 0
 }

@@ -30,5 +30,5 @@ func FillMainArgs(mainArgs *C.struct__cef_main_args_t, appHandle unsafe.Pointer)
 
 func FillWindowInfo(windowInfo *C.cef_window_info_t, hwnd unsafe.Pointer) {
 	log.Debug("FillWindowInfo")
-	windowInfo.parent_widget = (*C.GtkWidget)(hwnd)
+	//windowInfo.parent_widget = (*C.GtkWidget)(hwnd)
 }
