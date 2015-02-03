@@ -36,7 +36,7 @@ func main() {
 	settings.ResourcesDirPath = releasePath
 	settings.LocalesDirPath = releasePath + "/locales"
 	settings.CachePath = cwd + "/webcache"      // Set to empty to disable
-	settings.LogSeverity = cef.LOGSEVERITY_INFO // LOGSEVERITY_VERBOSE
+	settings.LogSeverity = cef.LOGSEVERITY_VERBOSE // LOGSEVERITY_VERBOSE
 	settings.LogFile = cwd + "/debug.log"
 	settings.RemoteDebuggingPort = 7000
 	cef.Initialize(settings)
