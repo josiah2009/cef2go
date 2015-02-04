@@ -34,7 +34,7 @@ func main() {
 	settings := cef.Settings{}
 	settings.ResourcesDirPath = releasePath
 	settings.LocalesDirPath = releasePath + "/locales"
-	settings.CachePath = cwd + "/webcache"      // Set to empty to disable
+	settings.CachePath = cwd + "/webcache"         // Set to empty to disable
 	settings.LogSeverity = cef.LOGSEVERITY_VERBOSE // LOGSEVERITY_VERBOSE
 	settings.LogFile = cwd + "/debug.log"
 	settings.RemoteDebuggingPort = 7000
@@ -44,7 +44,7 @@ func main() {
 	//gtk.Initialize()
 	// window := gtk.CreateWindow("cef2go example", 1024, 768)
 	// gtk.ConnectDestroySignal(window, OnDestroyWindow)
-        cef.XlibRegisterHandlers()
+	//cef.XlibRegisterHandlers()
 
 	// Create browser.
 	browserSettings := &cef.BrowserSettings{}

@@ -33,7 +33,7 @@ void CEF_CALLBACK cef_render_process_handler_t_on_webkit_initialized(struct _cef
 ///
 struct _cef_render_process_handler_t*
         CEF_CALLBACK get_render_process_handler(struct _cef_app_t* self) {
-    DEBUG_POINTER("get_render_process_handler", self);
+    //DEBUG_POINTER("get_render_process_handler", self);
     cef_render_process_handler_t* renderProcessHandler = (cef_render_process_handler_t*)calloc(1, sizeof(cef_render_process_handler_t));
     renderProcessHandler->base.size = sizeof(cef_render_process_handler_t);
     initialize_cef_base((cef_base_t*) renderProcessHandler);
@@ -42,7 +42,7 @@ struct _cef_render_process_handler_t*
 }
 
 void initialize_app_handler(cef_app_t* app) {
-    DEBUG_POINTER("initialize_app_handler", app);
+    // DEBUG_POINTER("initialize_app_handler", app);
     app->base.size = sizeof(cef_app_t);
     initialize_cef_base((cef_base_t*)app);
     // callbacks

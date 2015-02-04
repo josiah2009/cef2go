@@ -21,7 +21,6 @@ var V8Callbacks map[string]V8Callback
 
 //export go_RenderProcessHandlerOnWebKitInitialized
 func go_RenderProcessHandlerOnWebKitInitialized(handler *C.cef_v8handler_t) {
-	log.Debug("go_RenderProcessHandlerOnWebKitInitialized")
 	extCode := `
       var cef2go;
       if (!cef2go) { 
