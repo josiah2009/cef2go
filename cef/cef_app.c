@@ -27,12 +27,16 @@ void CEF_CALLBACK cef_render_process_handler_t_on_webkit_initialized(struct _cef
     go_RenderProcessHandlerOnWebKitInitialized(goV8Handler);
 }
 
+// Set up the context initialized callback
+void CEF_CALLBACK cef_browser_process_handler_t_on_context_initialized(struct _cef_browser_process_handler_t* self) {
+    go_BrowserProcessHandlerOnContextInitialized();
+}
+
 ///
 // Return the handler for functionality specific to the render process. This
 // function is called on the render process main thread.
 ///
-struct _cef_render_process_handler_t*
-        CEF_CALLBACK get_render_process_handler(struct _cef_app_t* self) {
+struct _cef_render_process_handler_t* CEF_CALLBACK get_render_process_handler(struct _cef_app_t* self) {
     //DEBUG_POINTER("get_render_process_handler", self);
     cef_render_process_handler_t* renderProcessHandler = (cef_render_process_handler_t*)calloc(1, sizeof(cef_render_process_handler_t));
     renderProcessHandler->base.size = sizeof(cef_render_process_handler_t);
@@ -41,10 +45,24 @@ struct _cef_render_process_handler_t*
     return renderProcessHandler;
 }
 
+
+///
+// Return the handler for functionality specific to the browser process. This
+// function is called on multiple threads in the browser process.
+///
+struct _cef_browser_process_handler_t* CEF_CALLBACK get_browser_process_handler(struct _cef_app_t* self) {
+    cef_browser_process_handler_t* browserProcessHandler = (cef_browser_process_handler_t*)calloc(1, sizeof(cef_browser_process_handler_t));
+    browserProcessHandler->base.size = sizeof(cef_browser_process_handler_t);
+    initialize_cef_base((cef_base_t*) browserProcessHandler);
+    browserProcessHandler->on_context_initialized = cef_browser_process_handler_t_on_context_initialized;
+    return browserProcessHandler;
+}
+
 void initialize_app_handler(cef_app_t* app) {
     // DEBUG_POINTER("initialize_app_handler", app);
     app->base.size = sizeof(cef_app_t);
     initialize_cef_base((cef_base_t*)app);
     // callbacks
     app->get_render_process_handler = get_render_process_handler;
+    app->get_browser_process_handler = get_browser_process_handler;
 }

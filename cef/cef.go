@@ -36,6 +36,7 @@ import (
 )
 
 var log = logging.MustGetLogger("cef")
+var contextInitialized = make(chan int, 1)
 
 var _MainArgs *C.struct__cef_main_args_t
 var _AppHandler *C.cef_app_t               // requires reference counting
@@ -116,7 +117,7 @@ func ExecuteProcess(appHandle unsafe.Pointer) int {
 	// and cef_initialize().
 	// OFF: _SandboxInfo = C.cef_sandbox_info_create()
 
-	var exitCode C.int = C.cef_execute_process(_MainArgs, _AppHandler, _SandboxInfo)
+	var exitCode C.int = C.cef_execute_process(_MainArgs, _AppHandler, nil)
 	if exitCode >= 0 {
 		os.Exit(int(exitCode))
 	}
@@ -144,6 +145,7 @@ func (settings *Settings) ToCStruct() (cefSettings *C.struct__cef_settings_t) {
 	cefSettings.locales_dir_path = *CEFString(settings.LocalesDirPath)
 	cefSettings.remote_debugging_port = C.int(settings.RemoteDebuggingPort)
 	cefSettings.javascript_flags = *CEFString(settings.JavaScriptFlags)
+
 	cefSettings.no_sandbox = C.int(1)
 	return
 }
@@ -163,17 +165,33 @@ func Initialize(settings Settings) int {
 
 	globalLifespanHandler = &LifeSpanHandler{make(chan *Browser)}
 	go_AddRef(unsafe.Pointer(_AppHandler))
-	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, _SandboxInfo)
+	ret := C.cef_initialize(_MainArgs, settings.ToCStruct(), _AppHandler, nil)
+	log.Debug("cef_initalize: %d", int(ret))
+	if OnUIThread() == true {
+		WaitForContextInitialized()
+	}
 	// Sleep for 1500ms to let cef _really_ initialize
 	// https://code.google.com/p/cefpython/issues/detail?id=131#c2
-	time.Sleep(2500 * time.Millisecond)
+	// time.Sleep(2500 * time.Millisecond)
 
 	return int(ret)
 }
 
+func WaitForContextInitialized() {
+	select {
+	case <-contextInitialized:
+		return
+	case <-time.After(10 * time.Second):
+		log.Error("Timed out waiting for OnContextInitialized")
+	}
+}
+
 func RunMessageLoop() {
-	log.Debug("RunMessageLoop")
-	C.cef_run_message_loop()
+	for {
+		log.Debug("RunMessageLoop")
+		C.cef_run_message_loop()
+		time.Sleep(1 * time.Second)
+	}
 }
 
 func QuitMessageLoop() {

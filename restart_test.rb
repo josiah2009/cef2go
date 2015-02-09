@@ -5,6 +5,7 @@ failures     = 0
 successes    = 0
 i            = 0
 bin          = "cef2go"
+args         = "--disable-gpu -v DEBUG --single-process"
 
 def is_running?(bin, timeout)
   tries = 0
@@ -21,15 +22,17 @@ def kill(bin)
   `killall -9 #{bin} > /dev/null 2>&1`
 end
 
-def run(release_path, bin)
-  `RELEASE_PATH=#{File.expand_path(release_path)} ./#{bin} >> test.log 2>&1 &`
+def run(release_path, bin, args)
+  `echo "############" >> test.log`
+  `RELEASE_PATH=#{File.expand_path(release_path)} ./#{bin} #{args} >> test.log 2>&1`
+  $?.to_i == 0
 end
 
 puts "Running #{bin} #{attempts} times"
 
 while i < attempts
-  run(release_path, bin)
-  if is_running?(bin, timeout)
+  if run(release_path, bin, args)
+  # if is_running?(bin, timeout)
     successes += 1
     print '.'
   else

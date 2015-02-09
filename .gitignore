@@ -5,3 +5,7 @@ debug.log
 *webcache*
 cef2go
 main_linux
+*.pak
+*.bin
+*.dat
+*.so

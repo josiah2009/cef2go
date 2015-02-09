@@ -13,6 +13,7 @@ import (
 )
 
 func main() {
+	//quit := make(chan int)
 	cwd, _ := os.Getwd()
 	logging.SetLevel(logging.DEBUG, "cef")
 	var releasePath = os.Getenv("RELEASE_PATH")
@@ -26,6 +27,8 @@ func main() {
 		arg2 := cef.V8ValueToBool(args[2])
 		arg3 := cef.V8ValueToString(args[3])
 		fmt.Printf("Calling V8Callback args: %d %d %v %s\n", arg0, arg1, arg2, arg3)
+		fmt.Printf("Exiting\n")
+		os.Exit(0)
 	}))
 	// CEF subprocesses.
 	cef.ExecuteProcess(nil)
@@ -34,17 +37,13 @@ func main() {
 	settings := cef.Settings{}
 	settings.ResourcesDirPath = releasePath
 	settings.LocalesDirPath = releasePath + "/locales"
-	settings.CachePath = cwd + "/webcache"         // Set to empty to disable
-	settings.LogSeverity = cef.LOGSEVERITY_VERBOSE // LOGSEVERITY_VERBOSE
+	settings.CachePath = cwd + "/webcache"      // Set to empty to disable
+	settings.LogSeverity = cef.LOGSEVERITY_INFO // LOGSEVERITY_VERBOSE
 	settings.LogFile = cwd + "/debug.log"
 	settings.RemoteDebuggingPort = 7000
 	cef.Initialize(settings)
 
-	// Create GTK window.
-	//gtk.Initialize()
-	// window := gtk.CreateWindow("cef2go example", 1024, 768)
-	// gtk.ConnectDestroySignal(window, OnDestroyWindow)
-	//cef.XlibRegisterHandlers()
+	// cef.XlibRegisterHandlers()
 
 	// Create browser.
 	browserSettings := &cef.BrowserSettings{}
@@ -56,7 +55,7 @@ func main() {
 	// CEF loop and shutdown.
 	cef.RunMessageLoop()
 	cef.Shutdown()
-	os.Exit(0)
+	os.Exit(1)
 }
 
 func OnDestroyWindow() {

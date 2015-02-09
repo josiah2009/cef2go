@@ -124,7 +124,7 @@ void initialize_render_handler() {
     renderHandler->on_paint = cef_render_handler_t_on_paint;
     renderHandler->on_cursor_change = cef_render_handler_t_on_cursor_change;
     renderHandler->on_scroll_offset_changed = cef_render_handler_t_on_scroll_offset_changed;
-    DEBUG_POINTER("render_handler", renderHandler);
+    //DEBUG_POINTER("render_handler", renderHandler);
     //go_AddRef((void *) renderHandler);
     go_client->render_handler = renderHandler;
 }
@@ -151,7 +151,7 @@ struct _cef_render_handler_t* CEF_CALLBACK get_render_handler(
 }
 
 void initialize_client_handler(struct _cef_client_t* client) {
-    DEBUG_POINTER("initialize_client_handler", client);
+    // DEBUG_POINTER("initialize_client_handler", client);
     go_client = (cef_go_client*)calloc(1, sizeof(cef_go_client));
     initialize_display_handler();
     initialize_life_span_handler();
