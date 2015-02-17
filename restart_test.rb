@@ -5,18 +5,7 @@ failures     = 0
 successes    = 0
 i            = 0
 bin          = "cef2go"
-args         = "--disable-gpu -v DEBUG --single-process"
-
-def is_running?(bin, timeout)
-  tries = 0
-  alive = true
-  while alive && tries < timeout
-    sleep 1
-    tries += 1
-    alive = `pidof #{bin}`.strip.split(' ').count > 0
-  end
-  alive
-end
+args         = "--disable-gpu -v DEBUG --single-process --disable-gpu --disable-gpu-compositing"
 
 def kill(bin)
   `killall -9 #{bin} > /dev/null 2>&1`
@@ -32,7 +21,6 @@ puts "Running #{bin} #{attempts} times"
 
 while i < attempts
   if run(release_path, bin, args)
-  # if is_running?(bin, timeout)
     successes += 1
     print '.'
   else

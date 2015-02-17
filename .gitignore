@@ -9,3 +9,4 @@ main_linux
 *.bin
 *.dat
 *.so
+cef_binary_*

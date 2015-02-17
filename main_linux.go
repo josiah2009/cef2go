@@ -28,6 +28,7 @@ func main() {
 		arg3 := cef.V8ValueToString(args[3])
 		fmt.Printf("Calling V8Callback args: %d %d %v %s\n", arg0, arg1, arg2, arg3)
 		fmt.Printf("Exiting\n")
+	        cef.QuitMessageLoop()
 		os.Exit(0)
 	}))
 	// CEF subprocesses.
@@ -58,6 +59,3 @@ func main() {
 	os.Exit(1)
 }
 
-func OnDestroyWindow() {
-	cef.QuitMessageLoop()
-}
