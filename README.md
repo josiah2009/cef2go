@@ -52,10 +52,18 @@ Messages like:
 [0218/214957:FATAL:content_main_runner.cc(749)] Check failed: base::i18n::InitializeICU(). 
 ```
 
-mean that the resources are not correctly linked
+mean that the resources are not correctly linked or are in the wrong location.
 
 ## Updating the CEF Version
 
-The process for updating CEF to a newer version is relatively simple:
+The process for updating CEF to a newer version is relatively simple.
+
+1. Download a new version from cefbuilds and extract.
+2. Update the headers: `cd <new_download>; cp -r include <cef2go>/lib/`
+3. Extract the new cef resources and libs with the `./extract_cef` script.
+4. Link the new resources with the `./link_cef` script.
+5. Try to compile the test application: `cd <cef2go>; go build`
+6. Fix any incompatibilities with new APIs until the application compiles.
+7. Push the new version, and update the version listed in this README.
 
 
