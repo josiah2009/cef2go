@@ -1,0 +1,9 @@
+#!/bin/bash -ex
+
+cef_bin_dir=$1
+cef_lib_dir=${2-/var/lib/cef}
+usr_lib_dir=${3-/usr/lib}
+
+mkdir -p $cef_lib_dir
+sudo cp -r $cef_bin_dir/Release/*.so $usr_lib_dir
+sudo cp -r $cef_bin_dir/Resources $cef_lib_dir

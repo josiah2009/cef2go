@@ -10,3 +10,4 @@ main_linux
 *.dat
 *.so
 cef_binary_*
+locales

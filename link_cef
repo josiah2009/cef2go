@@ -1,0 +1,11 @@
+#!/bin/bash -ex
+
+cef_app_dir=${1-.}
+cef_lib_dir=${2-/var/lib/cef}
+
+for file in $( ls $cef_lib_dir/Resources); do
+  if [ -e $cef_app_dir/$file ]; then 
+    rm $cef_app_dir/$file
+  fi
+  ln -nfs $cef_lib_dir/Resources/$file $cef_app_dir/$file
+done

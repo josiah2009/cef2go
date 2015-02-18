@@ -1,5 +1,3 @@
-// Website: https://github.com/CzarekTomczak/cef2go
-
 package cef
 
 /*
