@@ -17,7 +17,7 @@ CEF capi fixes
 */
 
 /*
-#cgo CFLAGS: -I./../lib
+#cgo CFLAGS: -I./lib
 #cgo LDFLAGS: -lcef
 #include <stdlib.h>
 #include "string.h"

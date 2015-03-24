@@ -1,6 +1,7 @@
 package cef
 
 /*
+#cgo CFLAGS: -I./lib
 #include <stdlib.h>
 #include "string.h"
 #include "include/capi/cef_app_capi.h"
