@@ -21,14 +21,14 @@ func main() {
 		releasePath = cwd
 	}
 	// you need to register to the callback before we fork processes
-	cef.RegisterV8Callback("sup", cef.V8Callback(func(args []cef.V8Value) {
-		arg0 := cef.V8ValueToInt32(args[0])
-		arg1 := cef.V8ValueToInt32(args[1])
-		arg2 := cef.V8ValueToBool(args[2])
-		arg3 := cef.V8ValueToString(args[3])
-		fmt.Printf("Calling V8Callback args: %d %d %v %s\n", arg0, arg1, arg2, arg3)
+	cef.RegisterV8Callback("sup", cef.V8Callback(func(args []*cef.V8Value) {
+		arg0 := args[0].ToInt32()
+		arg1 := args[1].ToFloat()
+		arg2 := args[2].ToBool()
+		arg3 := args[3].ToString()
+		fmt.Printf("Calling V8Callback args: %d %f %v %s\n", arg0, arg1, arg2, arg3)
 		fmt.Printf("Exiting\n")
-	        cef.QuitMessageLoop()
+		cef.QuitMessageLoop()
 		os.Exit(0)
 	}))
 	// CEF subprocesses.
@@ -44,18 +44,15 @@ func main() {
 	settings.RemoteDebuggingPort = 7000
 	cef.Initialize(settings)
 
-	// cef.XlibRegisterHandlers()
-
 	// Create browser.
 	browserSettings := &cef.BrowserSettings{}
 	url := "file://" + cwd + "/Release/example.html"
 	go func() {
 		browser := cef.CreateBrowser(browserSettings, url, true)
-		browser.ExecuteJavaScript("console.log('we outchea'); cef2go.callback('sup', 10, 10, true, 'something');", "sup.js", 1)
+		browser.ExecuteJavaScript("console.log('we outchea'); cef2go.callback('sup', 10, 13.10, true, 'something');", "sup.js", 1)
 	}()
 	// CEF loop and shutdown.
 	cef.RunMessageLoop()
 	cef.Shutdown()
 	os.Exit(1)
 }
-

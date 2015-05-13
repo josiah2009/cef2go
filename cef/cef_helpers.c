@@ -22,6 +22,10 @@ int v8ValueToBool(cef_v8value_t * b) {
       return b->get_bool_value(b);
 }
 
+double v8ValueToDouble(cef_v8value_t * d) {
+      return d->get_double_value(d);
+}
+
 void setCefRectDimensions(cef_rect_t * rect, int x, int y, int width, int height) {
       rect->x = x;
       rect->y = y;

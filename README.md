@@ -19,6 +19,12 @@ This fork includes a lot of changes very specific to our needs and is not attemp
 - If you're running on a machine that does not have a Graphics processor, it is best to run with the `--disable-gpu` flag to avoid warnings and potential errors.
 - There is an issue where in certain circumstances an application based on cef2go does not boot properly and then can not create browsers. There is a bunch of discussion about this here <https://github.com/CzarekTomczak/cef2go/issues/16> and here <https://code.google.com/p/chromiumembedded/issues/detail?id=1362>
 
+## JS Callbacks
+
+We've added a simple mechanism for making callbacks into go from running JS. Though cef allows to create C/C++ backed "native" js functions, allowing for the definition of those functions at runtime involves some pretty gnarly APIs. In order to simplify the creation and use of callbacks, we define a single "native" JS function `cef.callback()` that allows you to register any arbitrary functions with any number of arguments. It is up to the user to convert the callback arguments to their native go types (though helpers are provided).
+
+
+
 ## CEF Version and Compatibility
 
 This fork is compiled against CEF 3 branch 2272 revision 1998 (Chrome 41) from <http://cefbuilds.com>
