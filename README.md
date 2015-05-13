@@ -23,7 +23,37 @@ This fork includes a lot of changes very specific to our needs and is not attemp
 
 We've added a simple mechanism for making callbacks into go from running JS. Though cef allows to create C/C++ backed "native" js functions, allowing for the definition of those functions at runtime involves some pretty gnarly APIs. In order to simplify the creation and use of callbacks, we define a single "native" JS function `cef.callback()` that allows you to register any arbitrary functions with any number of arguments. It is up to the user to convert the callback arguments to their native go types (though helpers are provided).
 
+In your go program you register a callback that takes a `V8Callback func` that will execute when the callback is invoked in the browser:
 
+```
+cef.RegisterV8Callback("mycallback", cef.V8Callback(func(args []*cef.V8Value) {
+    // executed when called from js.
+}))
+```
+
+You would call this from the browser by executing:
+
+```
+cef.callback('mycallback', "arg1", 2);
+```
+
+Through the magic of JS the number of arguments is not set explicitly and is returned to the go side as a slice of V8Value pointers.
+
+You have to convert the values to their native go types through explicit helper methods:
+
+
+```
+cef.RegisterV8Callback("mycallback", cef.V8Callback(func(args []*cef.V8Value) {
+    arg0 := args[0].ToString()
+    arg1 := args[0].ToInt32()
+}))
+```
+
+This is obviously very powerful but there are a number of caveats:
+
+* Callbacks need to be registered before browsers are created.
+* Currently only basic type conversions are supported (Int, Float, Bool, String). Objects and Arrays are possible, but not done. [You can flatten an array into arguments on the JS side, though].
+* If you are running in multi-process mode (the default - as opposed to single-process) the callback will be executed in the browser process and not in the main process, so if you want to callback to your main process you need to use IPC (possible, but I havent tested) or run in single-process mode.
 
 ## CEF Version and Compatibility
 

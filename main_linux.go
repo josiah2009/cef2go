@@ -23,7 +23,7 @@ func main() {
 	// you need to register to the callback before we fork processes
 	cef.RegisterV8Callback("sup", cef.V8Callback(func(args []*cef.V8Value) {
 		arg0 := args[0].ToInt32()
-		arg1 := args[1].ToFloat()
+		arg1 := args[1].ToFloat32()
 		arg2 := args[2].ToBool()
 		arg3 := args[3].ToString()
 		fmt.Printf("Calling V8Callback args: %d %f %v %s\n", arg0, arg1, arg2, arg3)

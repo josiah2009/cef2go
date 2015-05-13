@@ -70,7 +70,7 @@ func (v *V8Value) ToInt32() int32 {
 	return int32(C.v8ValueToInt32((*C.cef_v8value_t)(v)))
 }
 
-func (v *V8Value) ToFloat() float32 {
+func (v *V8Value) ToFloat32() float32 {
 	return float32(C.v8ValueToDouble((*C.cef_v8value_t)(v)))
 }
 
