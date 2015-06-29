@@ -23,14 +23,14 @@ var V8Callbacks map[string]V8Callback
 func go_RenderProcessHandlerOnWebKitInitialized(handler *C.cef_v8handler_t) {
 	extCode := `
       var cef2go;
-      if (!cef2go) { 
-        cef2go = {}; 
-      } 
-      (function() { 
-        cef2go.callback = function() { 
-          native function callback(); 
-          return callback.apply(this, arguments); 
-        } 
+      if (!cef2go) {
+        cef2go = {};
+      }
+      (function() {
+        cef2go.callback = function() {
+          native function callback();
+          return callback.apply(this, arguments);
+        }
       })();
     `
 	C.cef_register_extension(CEFString("v8/cef2go"), CEFString(extCode), handler)
