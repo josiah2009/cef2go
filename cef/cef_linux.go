@@ -13,10 +13,6 @@ package cef
 import "C"
 import "unsafe"
 
-import (
-	"os"
-)
-
 func FillMainArgs(osArgs []string, mainArgs *C.struct__cef_main_args_t, appHandle unsafe.Pointer) {
 	var _Argv []*C.char = make([]*C.char, len(osArgs))
 	// On Linux appHandle is nil.
