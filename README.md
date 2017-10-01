@@ -57,7 +57,7 @@ This is obviously very powerful but there are a number of caveats:
 
 ## CEF Version and Compatibility
 
-This fork is compiled against CEF 3 branch 2272 revision 1998 (Chrome 41) from <http://cefbuilds.com>
+This fork is compiled against CEF 3 branch 3163 revision 1670 (Chrome 61) from <http://cefbuilds.com>
 
 ## Building and running an application
 
@@ -66,7 +66,7 @@ Building an application based on cef2go on linux requires some special setup and
 After downloading the specific cef build outlined above and extracting it to a directory you need to move the libraries and resources to their proper locations.
 
 ``` bash
-cd cef_binary_3.2272.1998_linux64
+cd cef_binary_3.3163.1670.g934eaba_linux64
 # Move libcef.so to the shared lib directory (/usr/lib) 
 # so it can be found by the linker (ld) (will probably require sudo)
 mv Release/*.so /usr/lib

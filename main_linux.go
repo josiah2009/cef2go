@@ -4,37 +4,64 @@
 
 package main
 
+//#include <string.h>
 import "C"
 import (
 	"fmt"
-	"github.com/mmatey/cef2go/cef"
+	"github.com/josiah2009/cef2go/cef"
 	"github.com/op/go-logging"
 	"os"
-	//"time"
+	"time"
+	"unsafe"
 )
 
+const browserWidth = 1280
+const browserHeight = 720
+
+type OffscreenRenderHandler struct {
+}
+
+func (this *OffscreenRenderHandler) GetRootScreenRect(rect *cef.CefRect) int {
+	rect.SetDimensions(0, 0, browserWidth, browserHeight)
+	return 1
+}
+
+func (this *OffscreenRenderHandler) GetViewRect(rect *cef.CefRect) int {
+	rect.SetDimensions(0, 0, browserWidth, browserHeight)
+	return 1
+}
+
+func (this *OffscreenRenderHandler) GetScreenPoint(x, y int, screenX, screenY *int) int {
+	return 0
+}
+
+func (this *OffscreenRenderHandler) GetScreenInfo(info *cef.CefScreenInfo) int {
+	return 0
+}
+
+func (this *OffscreenRenderHandler) OnPopupShow(show int) {
+}
+
+func (this *OffscreenRenderHandler) OnPopupSize(size *cef.CefRect) {
+}
+
+func (this *OffscreenRenderHandler) OnPaint(paintType cef.CefPaintElementType, dirtyRectsCount int, dirtyRects unsafe.Pointer, buffer unsafe.Pointer, width, height int) {
+}
+
+func (this *OffscreenRenderHandler) OnCursorChange(cursor cef.CefCursorHandle, ctype cef.CefCursorType, custom_cursor_info cef.CefCursorInfo) {
+}
+
+func (this *OffscreenRenderHandler) OnScrollOffsetChanged(x, y float64) {
+}
+
 func main() {
-	//quit := make(chan int)
 	cwd, _ := os.Getwd()
 	logging.SetLevel(logging.DEBUG, "cef")
 	var releasePath = os.Getenv("RELEASE_PATH")
 	if releasePath == "" {
 		releasePath = cwd
 	}
-	// you need to register to the callback before we fork processes
-	cef.RegisterV8Callback("loaded", cef.V8Callback(func(args []*cef.V8Value) {
-		arg0 := args[0].ToString()
-		arg1 := args[1].ToString()
-		fmt.Printf("Calling V8Callback Loaded args:  %s %s\n", arg0, arg1)
-	}))
 
-	cef.RegisterV8Callback("sup", cef.V8Callback(func(args []*cef.V8Value) {
-		arg0 := args[0].ToInt32()
-		arg1 := args[1].ToFloat32()
-		arg2 := args[2].ToBool()
-		arg3 := args[3].ToString()
-		fmt.Printf("Calling V8Callback args: %d %f %v %s\n", arg0, arg1, arg2, arg3)
-	}))
 	// CEF subprocesses.
 	cef.ExecuteProcess(nil)
 
@@ -50,33 +77,16 @@ func main() {
 	init := cef.Initialize(settings)
 	fmt.Printf("Initialized: %d", init)
 	cef.XlibRegisterHandlers()
-	//time.Sleep(2500 * time.Millisecond)
+	time.Sleep(2500 * time.Millisecond)
 	// Create browser.
 	browserSettings := &cef.BrowserSettings{}
-	url := "http://www.retailmenot.com"
+	url := "file://" + cwd + "/Release/example.html"
 	go func() {
-		browser := cef.CreateBrowser(browserSettings, "about:blank", false)
-		//lifeSpan := cef.LifeSpanHandler{browser}
-		//browser2, err := cef.LifeSpanHandler.RegisterAndWaitForBrowser()
-		/*		if err != nil {
-				fmt.Errorf(err.Error())
-			}*/
-		// cef.WaitForContextInitialized()
-		loadPage(url, browser)
-		browser.ExecuteJavaScript("console.log('loaded'); cef2go.callback('sup', window.screen.availWidth, 13.5, true, window.document.location.href);", "sup.js", 1)
-
-		/*		browser.LoadURL("http://retailmenot.com")
-				// cef.WaitForContextInitialized()
-				browser.ExecuteJavaScript("console.log('loaded'); cef2go.callback('sup', window.screen.availWidth, 13.5, true, window.document.location.href);", "sup.js", 1)*/
+		browser := cef.CreateBrowser(browserSettings, url, true)
+		browser.RenderHandler = &OffscreenRenderHandler{}
 	}()
 	// CEF loop and shutdown.
 	cef.RunMessageLoop()
 	cef.Shutdown()
 	os.Exit(1)
-}
-
-func loadPage(url string, browser *cef.Browser) {
-	pageId := "abc"
-	browser.LoadURL(url)
-	browser.ExecuteJavaScript(fmt.Sprintf("console.log(document.body.length);console.log();if(document.body.length && document.body.length > 0){console.log('TEEEEST1b');cef2go.callback('loaded', '%s', 'a ' + document.body.length)}else{console.log('TEEEST1a');document.addEventListener('DOMContentLoaded', function(){console.log('TEEEEST2');cef2go.callback('loaded', '%s', 'a ' + window.document.title)}, true)};", pageId, pageId), "sup2.js", 1)
 }

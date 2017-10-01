@@ -33,7 +33,7 @@ type RenderHandler interface {
 	OnPopupSize(*CefRect)
 	OnPaint(CefPaintElementType, int, unsafe.Pointer, unsafe.Pointer, int, int)
 	OnCursorChange(CefCursorHandle, CefCursorType, CefCursorInfo)
-	OnScrollOffsetChanged()
+	OnScrollOffsetChanged(float64, float64)
 }
 
 //export go_RenderHandlerGetRootScreenRect
@@ -98,9 +98,9 @@ func go_RenderHandlerOnCursorChange(browserId int, cursor C.cef_cursor_handle_t,
 }
 
 //export go_RenderHandlerOnScrollOffsetChanged
-func go_RenderHandlerOnScrollOffsetChanged(browserId int) {
+func go_RenderHandlerOnScrollOffsetChanged(browserId int, x, y float64) {
 	if b, ok := BrowserById(browserId); ok {
-		b.RenderHandler.OnScrollOffsetChanged()
+		b.RenderHandler.OnScrollOffsetChanged(x, y)
 	}
 }
 
@@ -136,5 +136,5 @@ func (d *DefaultRenderHandler) OnPaint(paintType CefPaintElementType, dirtyRects
 func (d *DefaultRenderHandler) OnCursorChange(cursor CefCursorHandle, ctype CefCursorType, custom_cursor_info CefCursorInfo) {
 }
 
-func (d *DefaultRenderHandler) OnScrollOffsetChanged() {
+func (d *DefaultRenderHandler) OnScrollOffsetChanged(x, y float64) {
 }

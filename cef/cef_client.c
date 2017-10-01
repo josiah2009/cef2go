@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #include "include/capi/cef_client_capi.h"
 #include "include/capi/cef_browser_capi.h"
@@ -19,6 +20,9 @@ int CEF_CALLBACK cef_display_handler_t_on_console_message(
       struct _cef_display_handler_t* self,
       struct _cef_browser_t* browser, const cef_string_t* message,
       const cef_string_t* source, int line) {
+    if (source == (cef_string_t *)0xfffffffffffffff8) {
+        return 1;
+    }
     go_OnConsoleMessage(browser, message, source, line);
     return 1;
 }
@@ -84,16 +88,18 @@ void CEF_CALLBACK cef_render_handler_t_on_cursor_change(struct _cef_render_handl
 }
 
 void CEF_CALLBACK cef_render_handler_t_on_scroll_offset_changed(struct _cef_render_handler_t* self,
-      struct _cef_browser_t* browser) {
-      DEBUG_CALLBACK("render_handler->on_scroll_offset_changed");
-      go_RenderHandlerOnScrollOffsetChanged(browser->get_identifier(browser));
+      struct _cef_browser_t* browser,
+      double x,
+      double y) {
+      //DEBUG_CALLBACK("render_handler->on_scroll_offset_changed");
+      go_RenderHandlerOnScrollOffsetChanged(browser->get_identifier(browser), x, y);
 }
 
 
 void initialize_display_handler() {
     cef_display_handler_t* displayHandler = (cef_display_handler_t*)calloc(1, sizeof(cef_display_handler_t));
     displayHandler->base.size = sizeof(cef_display_handler_t);
-    initialize_cef_base((cef_base_t*) displayHandler);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*) displayHandler);
     // callbacks
     displayHandler->on_console_message = cef_display_handler_t_on_console_message;
     go_client->display_handler = displayHandler;
@@ -103,7 +109,7 @@ void initialize_life_span_handler() {
     cef_life_span_handler_t* lifeHandler = (cef_life_span_handler_t*)calloc(1, sizeof(cef_life_span_handler_t));
     //DEBUG_CALLBACK("client->initialize_life_span_handler\n");
     lifeHandler->base.size = sizeof(cef_life_span_handler_t);
-    initialize_cef_base((cef_base_t*) lifeHandler);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*) lifeHandler);
     // callbacks
     lifeHandler->on_after_created = cef_life_span_handler_t_on_after_created;
     go_client->life_span_handler = lifeHandler;
@@ -113,7 +119,7 @@ void initialize_render_handler() {
     //DEBUG_CALLBACK("initialize_render_handler");
     cef_render_handler_t* renderHandler = (cef_render_handler_t*)calloc(1, sizeof(cef_render_handler_t));
     renderHandler->base.size = sizeof(cef_render_handler_t);
-    initialize_cef_base((cef_base_t*) renderHandler);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*) renderHandler);
     // callbacks
     renderHandler->get_root_screen_rect = cef_render_handler_t_get_root_screen_rect;
     renderHandler->get_view_rect = cef_render_handler_t_get_view_rect;
@@ -158,7 +164,7 @@ void initialize_client_handler(struct _cef_client_t* client) {
     initialize_render_handler();
 
     client->base.size = sizeof(cef_client_t);
-    initialize_cef_base((cef_base_t*)client);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*)client);
     // callbacks
     //DEBUG_CALLBACK("set_display_handler");
     client->get_display_handler = get_display_handler;

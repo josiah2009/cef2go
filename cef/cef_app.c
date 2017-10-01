@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #include "include/capi/cef_app_capi.h"
 #include "include/capi/cef_browser_process_handler_capi.h"
@@ -22,7 +23,7 @@ int CEF_CALLBACK cef_v8handler_execute(struct _cef_v8handler_t* self,
 void CEF_CALLBACK cef_render_process_handler_t_on_webkit_initialized(struct _cef_render_process_handler_t* self) {
     cef_v8handler_t* goV8Handler = (cef_v8handler_t*)calloc(1, sizeof(cef_v8handler_t));
     goV8Handler->base.size = sizeof(cef_v8handler_t);
-    initialize_cef_base((cef_base_t*) goV8Handler);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*) goV8Handler);
     goV8Handler->execute = cef_v8handler_execute;
     go_RenderProcessHandlerOnWebKitInitialized(goV8Handler);
 }
@@ -40,7 +41,7 @@ struct _cef_render_process_handler_t* CEF_CALLBACK get_render_process_handler(st
     //DEBUG_POINTER("get_render_process_handler", self);
     cef_render_process_handler_t* renderProcessHandler = (cef_render_process_handler_t*)calloc(1, sizeof(cef_render_process_handler_t));
     renderProcessHandler->base.size = sizeof(cef_render_process_handler_t);
-    initialize_cef_base((cef_base_t*) renderProcessHandler);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*) renderProcessHandler);
     renderProcessHandler->on_web_kit_initialized = cef_render_process_handler_t_on_webkit_initialized;
     return renderProcessHandler;
 }
@@ -53,7 +54,7 @@ struct _cef_render_process_handler_t* CEF_CALLBACK get_render_process_handler(st
 struct _cef_browser_process_handler_t* CEF_CALLBACK get_browser_process_handler(struct _cef_app_t* self) {
     cef_browser_process_handler_t* browserProcessHandler = (cef_browser_process_handler_t*)calloc(1, sizeof(cef_browser_process_handler_t));
     browserProcessHandler->base.size = sizeof(cef_browser_process_handler_t);
-    initialize_cef_base((cef_base_t*) browserProcessHandler);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*) browserProcessHandler);
     browserProcessHandler->on_context_initialized = cef_browser_process_handler_t_on_context_initialized;
     return browserProcessHandler;
 }
@@ -61,7 +62,7 @@ struct _cef_browser_process_handler_t* CEF_CALLBACK get_browser_process_handler(
 void initialize_app_handler(cef_app_t* app) {
     // DEBUG_POINTER("initialize_app_handler", app);
     app->base.size = sizeof(cef_app_t);
-    initialize_cef_base((cef_base_t*)app);
+    initialize_cef_base_ref_counted((cef_base_ref_counted_t*)app);
     // callbacks
     app->get_render_process_handler = get_render_process_handler;
     app->get_browser_process_handler = get_browser_process_handler;

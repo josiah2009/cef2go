@@ -88,7 +88,7 @@ func CreateBrowser(browserSettings *BrowserSettings, url string, offscreenRender
 	windowInfo = (*C.cef_window_info_t)(C.calloc(1, C.sizeof_cef_window_info_t))
 	if offscreenRendering {
 		windowInfo.windowless_rendering_enabled = 1
-		windowInfo.transparent_painting_enabled = 1
+		//windowInfo.transparent_painting_enabled = 1
 	}
 	C.cef_browser_host_create_browser(windowInfo, _ClientHandler, CEFString(url), browserSettings.ToCStruct(), nil)
 	b, err := globalLifespanHandler.RegisterAndWaitForBrowser()
@@ -135,7 +135,9 @@ func (b *Browser) GetWindowHandle() C.cef_window_handle_t {
 }
 
 func (b *Browser) GetURL() string {
-	return CEFToGoString(C.GetURL(b.cbrowser))
+	a := CEFToGoString(C.GetURL(b.cbrowser))
+    log.Debug("GetURL: %s", a)
+    return a
 }
 
 func (b *Browser) Close() {

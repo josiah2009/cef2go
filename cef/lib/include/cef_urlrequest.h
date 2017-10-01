@@ -41,6 +41,7 @@
 #include "include/cef_auth_callback.h"
 #include "include/cef_base.h"
 #include "include/cef_request.h"
+#include "include/cef_request_context.h"
 #include "include/cef_response.h"
 
 class CefURLRequestClient;
@@ -53,7 +54,7 @@ class CefURLRequestClient;
 // on the same thread that created it.
 ///
 /*--cef(source=library)--*/
-class CefURLRequest : public virtual CefBase {
+class CefURLRequest : public virtual CefBaseRefCounted {
  public:
   typedef cef_urlrequest_status_t Status;
   typedef cef_errorcode_t ErrorCode;
@@ -68,38 +69,42 @@ class CefURLRequest : public virtual CefBase {
   // would not normally be rendered then the response may receive special
   // handling inside the browser (for example, via the file download code path
   // instead of the URL request code path). The |request| object will be marked
-  // as read-only after calling this method.
+  // as read-only after calling this method. In the browser process if
+  // |request_context| is empty the global request context will be used. In the
+  // render process |request_context| must be empty and the context associated
+  // with the current renderer process' browser will be used.
   ///
-  /*--cef()--*/
+  /*--cef(optional_param=request_context)--*/
   static CefRefPtr<CefURLRequest> Create(
       CefRefPtr<CefRequest> request,
-      CefRefPtr<CefURLRequestClient> client);
+      CefRefPtr<CefURLRequestClient> client,
+      CefRefPtr<CefRequestContext> request_context);
 
   ///
   // Returns the request object used to create this URL request. The returned
   // object is read-only and should not be modified.
   ///
   /*--cef()--*/
-  virtual CefRefPtr<CefRequest> GetRequest() =0;
+  virtual CefRefPtr<CefRequest> GetRequest() = 0;
 
   ///
   // Returns the client.
   ///
   /*--cef()--*/
-  virtual CefRefPtr<CefURLRequestClient> GetClient() =0;
+  virtual CefRefPtr<CefURLRequestClient> GetClient() = 0;
 
   ///
   // Returns the request status.
   ///
   /*--cef(default_retval=UR_UNKNOWN)--*/
-  virtual Status GetRequestStatus() =0;
+  virtual Status GetRequestStatus() = 0;
 
   ///
   // Returns the request error if status is UR_CANCELED or UR_FAILED, or 0
   // otherwise.
   ///
   /*--cef(default_retval=ERR_NONE)--*/
-  virtual ErrorCode GetRequestError() =0;
+  virtual ErrorCode GetRequestError() = 0;
 
   ///
   // Returns the response, or NULL if no response information is available.
@@ -107,13 +112,13 @@ class CefURLRequest : public virtual CefBase {
   // The returned object is read-only and should not be modified.
   ///
   /*--cef()--*/
-  virtual CefRefPtr<CefResponse> GetResponse() =0;
+  virtual CefRefPtr<CefResponse> GetResponse() = 0;
 
   ///
   // Cancel the request.
   ///
   /*--cef()--*/
-  virtual void Cancel() =0;
+  virtual void Cancel() = 0;
 };
 
 ///
@@ -122,7 +127,7 @@ class CefURLRequest : public virtual CefBase {
 // request unless otherwise documented.
 ///
 /*--cef(source=client)--*/
-class CefURLRequestClient : public virtual CefBase {
+class CefURLRequestClient : public virtual CefBaseRefCounted {
  public:
   ///
   // Notifies the client that the request has completed. Use the
@@ -130,7 +135,7 @@ class CefURLRequestClient : public virtual CefBase {
   // successful or not.
   ///
   /*--cef()--*/
-  virtual void OnRequestComplete(CefRefPtr<CefURLRequest> request) =0;
+  virtual void OnRequestComplete(CefRefPtr<CefURLRequest> request) = 0;
 
   ///
   // Notifies the client of upload progress. |current| denotes the number of
@@ -141,7 +146,7 @@ class CefURLRequestClient : public virtual CefBase {
   /*--cef()--*/
   virtual void OnUploadProgress(CefRefPtr<CefURLRequest> request,
                                 int64 current,
-                                int64 total) =0;
+                                int64 total) = 0;
 
   ///
   // Notifies the client of download progress. |current| denotes the number of
@@ -151,7 +156,7 @@ class CefURLRequestClient : public virtual CefBase {
   /*--cef()--*/
   virtual void OnDownloadProgress(CefRefPtr<CefURLRequest> request,
                                   int64 current,
-                                  int64 total) =0;
+                                  int64 total) = 0;
 
   ///
   // Called when some part of the response is read. |data| contains the current
@@ -161,7 +166,7 @@ class CefURLRequestClient : public virtual CefBase {
   /*--cef()--*/
   virtual void OnDownloadData(CefRefPtr<CefURLRequest> request,
                               const void* data,
-                              size_t data_length) =0;
+                              size_t data_length) = 0;
 
   ///
   // Called on the IO thread when the browser needs credentials from the user.
@@ -177,7 +182,7 @@ class CefURLRequestClient : public virtual CefBase {
                                   int port,
                                   const CefString& realm,
                                   const CefString& scheme,
-                                  CefRefPtr<CefAuthCallback> callback) =0;
+                                  CefRefPtr<CefAuthCallback> callback) = 0;
 };
 
 #endif  // CEF_INCLUDE_CEF_URLREQUEST_H_
