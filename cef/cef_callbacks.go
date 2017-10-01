@@ -32,9 +32,5 @@ func go_LogPointer(str *C.char, p unsafe.Pointer) {
 
 //export go_OnConsoleMessage
 func go_OnConsoleMessage(browser *C.cef_browser_t, message *C.cef_string_t, source *C.cef_string_t, line int) {
-    if message == nil {
-        return
-    }
-
 	consoleHandler(CEFToGoString(message), CEFToGoString(source), line)
 }

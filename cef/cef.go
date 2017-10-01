@@ -87,10 +87,6 @@ func CEFString(original string) (final *C.cef_string_t) {
 }
 
 func CEFToGoString(source *C.cef_string_t) string {
-    if source == nil {
-        return ""
-    }
-    log.Info("[CEFToGoString]", source)
 	utf8string := C.cefSourceToString(source)
 	defer C.cef_string_userfree_utf8_free(utf8string)
 	return C.GoString(utf8string.str)

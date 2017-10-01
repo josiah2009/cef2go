@@ -20,9 +20,6 @@ int CEF_CALLBACK cef_display_handler_t_on_console_message(
       struct _cef_display_handler_t* self,
       struct _cef_browser_t* browser, const cef_string_t* message,
       const cef_string_t* source, int line) {
-    if (source == (cef_string_t *)0xfffffffffffffff8) {
-        return 1;
-    }
     go_OnConsoleMessage(browser, message, source, line);
     return 1;
 }

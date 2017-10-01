@@ -135,9 +135,7 @@ func (b *Browser) GetWindowHandle() C.cef_window_handle_t {
 }
 
 func (b *Browser) GetURL() string {
-	a := CEFToGoString(C.GetURL(b.cbrowser))
-    log.Debug("GetURL: %s", a)
-    return a
+	return CEFToGoString(C.GetURL(b.cbrowser))
 }
 
 func (b *Browser) Close() {
