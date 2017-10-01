@@ -105,11 +105,11 @@ func _InitializeGlobalCStructures() {
 	C.initialize_client_handler(_ClientHandler)
 }
 
-func ExecuteProcess(appHandle unsafe.Pointer) int {
-	log.Debug("ExecuteProcess, args=%v", os.Args)
+func ExecuteProcess(appHandle unsafe.Pointer, osArgs []string) int {
+	log.Debug("ExecuteProcess, args=%v", osArgs)
 
 	_InitializeGlobalCStructures()
-	FillMainArgs(_MainArgs, appHandle)
+	FillMainArgs(osArgs, _MainArgs, appHandle)
 
 	// Sandbox info needs to be passed to both cef_execute_process()
 	// and cef_initialize().

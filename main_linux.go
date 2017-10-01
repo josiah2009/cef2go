@@ -63,7 +63,7 @@ func main() {
 	}
 
 	// CEF subprocesses.
-	cef.ExecuteProcess(nil)
+	cef.ExecuteProcess(nil, os.Args)
 
 	// CEF initialize.
 	settings := cef.Settings{}

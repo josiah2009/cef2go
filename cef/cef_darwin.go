@@ -24,14 +24,14 @@ import (
 	"os"
 )
 
-func FillMainArgs(mainArgs *C.struct__cef_main_args_t, appHandle unsafe.Pointer) {
-	var _Argv []*C.char = make([]*C.char, len(os.Args))
+func FillMainArgs(osArgs []string, mainArgs *C.struct__cef_main_args_t, appHandle unsafe.Pointer) {
+	var _Argv []*C.char = make([]*C.char, len(osArgs))
 	// On Mac appHandle is nil.
-	log.Debug("FillMainArgs, argc=", len(os.Args))
-	for i, arg := range os.Args {
+	log.Debug("FillMainArgs, argc=", len(osArgs))
+	for i, arg := range osArgs {
 		_Argv[C.int(i)] = C.CString(arg)
 	}
-	mainArgs.argc = C.int(len(os.Args))
+	mainArgs.argc = C.int(len(osArgs))
 	mainArgs.argv = &_Argv[0]
 }
 

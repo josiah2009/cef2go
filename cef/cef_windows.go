@@ -14,7 +14,7 @@ package cef
 import "C"
 import "unsafe"
 
-func FillMainArgs(mainArgs *C.struct__cef_main_args_t,
+func FillMainArgs(osArgs []string, mainArgs *C.struct__cef_main_args_t,
 	appHandle unsafe.Pointer) {
 	log.Debug("FillMainArgs")
 	mainArgs.instance = (C.HINSTANCE)(appHandle)
